@@ -62,8 +62,7 @@ export default function UsersForm() {
 
         <button
           type="submit"
-          className="w-full text-lg text-white bg-orange-700 font-bold uppercase py-2 px-4 rounded-xl hover:bg-white hover:text-orange-600 transition-all duration-300"
-        
+          className="w-full text-lg text-white bg-orange-600 font-bold uppercase py-2 px-4 rounded-xl hover:bg-white hover:text-orange-600 transition-all duration-300"
         >
           Iniciar sesión
         </button>

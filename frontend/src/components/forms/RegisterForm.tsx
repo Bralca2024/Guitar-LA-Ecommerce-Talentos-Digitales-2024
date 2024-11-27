@@ -22,13 +22,15 @@ export default function RegisterForm() {
         });
 
         if (!response.ok) {
-            throw new Error("Error al registrar usuario");
+            const errorData = await response.json();
+            console.error("Error del servidor:", errorData);
+            throw new Error(errorData.message || "Error al registrar usuario");
         }
 
         alert("Usuario registrado con éxito");
         } catch (error) {
-        console.error(error);
-        alert("Hubo un problema al registrar el usuario");
+            console.error("Error en el registro:", error);
+            alert("Hubo un problema al registrar el usuario");
         }
     };
 
@@ -130,7 +132,7 @@ export default function RegisterForm() {
 
             <button
             type="submit"
-            className="w-full text-lg text-white bg-orange-700 font-bold uppercase py-2 px-4 rounded-xl hover:bg-white hover:text-orange-600 transition-all duration-300"
+            className="w-full text-lg text-white bg-orange-600 font-bold uppercase py-2 px-4 rounded-xl hover:bg-white hover:text-orange-600 transition-all duration-300"
             >
             Registrarse
             </button>
