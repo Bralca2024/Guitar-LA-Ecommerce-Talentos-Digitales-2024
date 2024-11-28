@@ -52,7 +52,7 @@ export const useProductStore = create<ProductState>((set) => ({
   getOneProduct: async (productID) => {
     set({ loading: true });
     try {
-      const response = await axios.get(`${BASE_URL}/${productID}`);
+      const response = await axios.get(`${BASE_URL}/products/${productID}`);
       const responseData = response.data;
       const validatedProduct = ProductSchema.parse(responseData);
 
