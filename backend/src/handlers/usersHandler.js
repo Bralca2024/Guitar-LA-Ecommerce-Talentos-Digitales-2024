@@ -59,7 +59,7 @@ const getAllUsersHandler = async (req, res) => {
   }
 }
 
-const getOneUserHandler = async () => {
+const getOneUserHandler = async (req, res) => {
   try {
     const { id } = req.params;
     const response = await getUserByIdController(id);
