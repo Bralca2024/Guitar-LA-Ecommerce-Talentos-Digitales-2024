@@ -34,7 +34,7 @@ export const useProductStore = create<ProductState>((set) => ({
   fetchAllProducts: async () => {
     set({ loading: true });
     try {
-      const response = await axios.get(`${BASE_URL}`);
+      const response = await axios.get(`${BASE_URL}/products`);
       const productData = response.data;
 
       const validatedProduct = productData.map((product: ProductType) => {

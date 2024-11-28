@@ -66,7 +66,7 @@ export const useUserStore = create<UserState>((set) => ({
     // Crear un usuario
     createUser: async (userData) => {
         try {
-        const response = await axios.post(`${BASE_URL}/users/create`, userData);
+        const response = await axios.post(`${BASE_URL}/auth/register`, userData);
         const newUser = UserSchema.parse(response.data);
         set((state) => ({ allUsers: [...state.allUsers, newUser] }));
         } catch (error) {
