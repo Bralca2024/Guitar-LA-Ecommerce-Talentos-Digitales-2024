@@ -8,18 +8,28 @@ type LoginFormData = {
 export default function UsersForm() {
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
 
+  const baseUrl = import.meta.env.VITE_BASE_URL;
+
   const handleLogin = async (data: LoginFormData) => {
     try {
-      const response = await fetch("/api/auth/login", {
+      const response = await fetch(`${baseUrl}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
       if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error del servidor:", errorData);
         throw new Error("Error al iniciar sesión");
       }
 
+      const responseData = await response.json();  // Suponiendo que la respuesta tenga el token y el rol
+
+      // Almacena el token y el rol en localStorage
+      localStorage.setItem("token", responseData.token);  // Almacena el token
+      localStorage.setItem("role", responseData.user.role);  // Almacena el rol
+      
       alert("Inicio de sesión exitoso");
     } catch (error) {
       console.error(error);
