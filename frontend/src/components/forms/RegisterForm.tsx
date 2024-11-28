@@ -11,28 +11,35 @@ type RegisterFormData = {
 };
 
 export default function RegisterForm() {
+
+    const baseUrl = import.meta.env.VITE_BASE_URL;
+    console.log(baseUrl)
     const { register, handleSubmit, formState: { errors } } = useForm<RegisterFormData>();
 
     const handleRegister = async (data: RegisterFormData) => {
         try {
-        const response = await fetch("/api/auth/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error("Error del servidor:", errorData);
-            throw new Error(errorData.message || "Error al registrar usuario");
-        }
-
-        alert("Usuario registrado con éxito");
+            const response = await fetch(`${baseUrl}/auth/register`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            });
+    
+            // Verifica si la respuesta es exitosa
+            if (!response.ok) {
+                const errorData = await response.text(); // Usamos .text() en lugar de .json() en caso de error 404 u otros
+                console.error("Error del servidor:", errorData);
+                throw new Error(errorData || "Error al registrar usuario");
+            }
+    
+            const responseData = await response.json(); // Solo parsea como JSON si la respuesta es 200 OK
+            alert("Usuario registrado con éxito");
+            console.log(responseData)
         } catch (error) {
             console.error("Error en el registro:", error);
             alert("Hubo un problema al registrar el usuario");
         }
     };
+    
 
     return (
         <div className="p-4 border rounded-md shadow-md bg-white max-w-md mx-auto">
