@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../store/authStore";
 
 type LoginFormData = {
   email: string;
@@ -9,6 +10,7 @@ type LoginFormData = {
 export default function UsersForm() {
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
   const navigate = useNavigate();
+  const {setRole, setToken} = useAuthStore();
 
   const baseUrl = import.meta.env.VITE_BASE_URL;
 
@@ -29,8 +31,9 @@ export default function UsersForm() {
       const responseData = await response.json();  // Suponiendo que la respuesta tenga el token y el rol
 
       // Almacena el token y el rol en localStorage
-      localStorage.setItem("token", responseData.token);  // Almacena el token
-      localStorage.setItem("role", responseData.user.role);  // Almacena el rol
+      setToken(responseData.token)
+      setRole(responseData.user.role)
+      
       navigate('/') //redirecciona al inicio luego de un inicio de sesion exitoso
       alert("Inicio de sesión exitoso");
     } catch (error) {
