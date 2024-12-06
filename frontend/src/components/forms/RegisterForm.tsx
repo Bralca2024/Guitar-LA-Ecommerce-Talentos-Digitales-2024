@@ -59,7 +59,7 @@ export default function RegisterForm() {
             console.error("Error en el registro:", error);
             setMessage({ text: "Hubo un problema con la conexión. Por favor, revisa tu red.", type: "error" });
         }
-    };
+};
 
     return (
         <div className="p-4 border rounded-md shadow-md bg-white max-w-md mx-auto">
