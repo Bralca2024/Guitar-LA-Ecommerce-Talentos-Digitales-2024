@@ -84,6 +84,8 @@ const loginHandler= async (req, res) => {
 
         // Verifica credenciales usando el controlador
         const response = await loginController(email, password);
+        
+        // Envía la respuesta incluyendo el userID
         res.status(200).json(response);
     } catch (error){
         if (error.message === "El usuario no está registrado." || error.message === "Contraseña incorrecta.") {

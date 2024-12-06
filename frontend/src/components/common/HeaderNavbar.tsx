@@ -344,7 +344,7 @@ export default function HeaderNavbar() {
                         </h2>
                         <div className="flex justify-center gap-4">
                             <button
-                                className="bg-red-500 text-white px-4 py-2 rounded"
+                                className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-800 hover:text-white transition-all duration-300"
                                 onClick={handleLogout}
                             >
                                 Sí

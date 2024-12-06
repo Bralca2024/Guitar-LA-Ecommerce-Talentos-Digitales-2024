@@ -61,7 +61,11 @@ const loginController = async (email, password) => {
     // Excluye la contraseña antes de devolver los datos del usuario
     const { password: _, ...userWithoutPassword } = user.toObject();
 
-    return { message: "Inicio de sesión exitoso.", token, user: userWithoutPassword };
+    return {
+        message: "Inicio de sesión exitoso.",
+        token,
+        user: userWithoutPassword,
+    };
 }
 
 export {
