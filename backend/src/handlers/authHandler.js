@@ -24,16 +24,17 @@ const userSchema = Joi.object({
         'string.min': 'El nombre completo debe tener al menos 3 caracteres.',
         'string.max': 'El nombre completo no puede exceder los 50 caracteres.',
     }),
-    dateOfBirth: Joi.date().optional().messages({
+    dateOfBirth: Joi.date().optional().allow(null).messages({
         'date.base': 'La fecha de nacimiento debe ser una fecha válida.',
     }),
     phone: Joi.string()
         .pattern(/^[0-9]{10,15}$/)
         .optional()
+        .allow(null)
         .messages({
         'string.pattern.base': 'El teléfono debe contener entre 10 y 15 dígitos.',
         }),
-    address: Joi.string().optional().max(100).messages({
+    address: Joi.string().optional().allow(null).max(100).messages({
         'string.max': 'La dirección no puede exceder los 100 caracteres.',
     }),
     role: Joi.string().valid('admin', 'user').default('user').messages({
@@ -43,8 +44,8 @@ const userSchema = Joi.object({
 
 const registerHandler = async (req, res) => {
     try {
-        // Valida los datos del cliente
         const { error, value } = userSchema.validate(req.body, { abortEarly: false });
+
         if (error) {
             return res.status(400).json({
                 message: 'Error en los datos enviados.',
@@ -52,17 +53,29 @@ const registerHandler = async (req, res) => {
             });
         }
 
-        // Registra al usuario usando el controlador
-        const response = await registerController(value.username, value.email, value.password, value.fullName, value.dateOfBirth, value.phone, value.address, value.role);
-        
+        const response = await registerController(
+            value.username, 
+            value.email, 
+            value.password, 
+            value.fullName, 
+            value.dateOfBirth, 
+            value.phone, 
+            value.address, 
+            value.role
+        );
+
         res.status(201).json({ message: 'Usuario registrado con éxito.', user: response });
+
     } catch (error) {
-        if (error.message.includes("El usuario ya está registrado")) {
-            return res.status(400).json({ message: error.message });
+        // Asegúrate de que el error contenga el mensaje adecuado
+        if (error.message && error.message.includes("ya está registrado")) {
+            return res.status(409).json({ message: error.message });
         }
-        console.error(error);
-        res.status(500).json({ message: 'Error interno del servidor.' });
+
+        console.error("Error interno:", error);
+        res.status(500).json({ message: 'Ocurrió un error inesperado. Intenta más tarde.' });
     }
+
 }
 
 const loginHandler= async (req, res) => {

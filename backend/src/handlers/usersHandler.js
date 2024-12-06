@@ -26,16 +26,17 @@ const userSchema = Joi.object({
     'string.min': 'El nombre completo debe tener al menos 3 caracteres.',
     'string.max': 'El nombre completo no puede exceder los 50 caracteres.',
   }),
-  dateOfBirth: Joi.date().optional().messages({
+  dateOfBirth: Joi.date().optional().allow(null).messages({
     'date.base': 'La fecha de nacimiento debe ser una fecha válida.',
   }),
   phone: Joi.string()
     .pattern(/^[0-9]{10,15}$/)
     .optional()
+    .allow(null)
     .messages({
       'string.pattern.base': 'El teléfono debe contener entre 10 y 15 dígitos.',
     }),
-  address: Joi.string().optional().max(100).messages({
+  address: Joi.string().optional().allow(null).max(100).messages({
     'string.max': 'La dirección no puede exceder los 100 caracteres.',
   }),
   role: Joi.string().valid('admin', 'user').default('user').messages({
@@ -71,27 +72,35 @@ const getOneUserHandler = async (req, res) => {
 
 const createUserHandler = async (req, res) => {
   try {
-    // Validar datos con Joi
-    const { error, value } = userSchema.validate(req.body, { abortEarly: false });
+    // Limpia los campos opcionales
+    const cleanedBody = Object.fromEntries(
+      Object.entries(req.body).map(([key, value]) => [key, value || null])
+    );
 
-    //Envía todos los errores de validación 
+    // Validar datos con Joi
+    const { error, value } = userSchema.validate(cleanedBody, { abortEarly: false });
+
     if (error) {
-      return res.status(400).send({
+      return res.status(400).json({
+        status: 'error',
         message: 'Error en los datos enviados.',
         details: error.details.map((detail) => detail.message),
       });
     }
-    
-    // Si los datos son válidos, procedemos a crear el usuario en la base de datos
-    const { username, email, password, fullName, dateOfBirth, phone, address, role, createdAt } = value
+
+    // Crear usuario
+    const { username, email, password, fullName, dateOfBirth, phone, address, role } = value;
     const response = await createUserController(username, email, password, fullName, dateOfBirth, phone, address, role);
 
     res.status(201).send(response);
   } catch (error) {
     console.error(error);
-    res.status(500).send({Error: error.message});
+    res.status(500).json({
+      status: 'error',
+      message: error.message,
+    });
   }
-}
+};
 
 const updateUserHandler = async (req, res) => {
   try {

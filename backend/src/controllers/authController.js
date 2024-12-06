@@ -7,7 +7,8 @@ const registerController = async (username, email, password, fullName, dateOfBir
     // Verifica si el usuario ya existe por email o username
     const userExists = await User.findOne({ $or: [{ email }, { username }] });
     if (userExists) {
-        throw new Error("El usuario ya está registrado (email o username en uso).");
+        const field = userExists.email === email ? 'correo' : 'nombre de usuario';
+        throw new Error(`El ${field} ya está registrado.`); // Lanzamos un error claro
     }
 
     // Hashea la contraseña
