@@ -16,6 +16,7 @@ export default function HeaderNavbar() {
     const {role, setRole, setToken} = useAuthStore();
     const [isOpen, setIsOpen] = useState(false);
     const [isLoginOpen, setIsLoginOpen] = useState(false);
+    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
@@ -29,11 +30,12 @@ export default function HeaderNavbar() {
     };
 
     const handleLogout = () => {
-      setRole(null)
-      setToken(null)
-      navigate('/login')
-    }
-
+        setIsLogoutModalOpen(false); // Cierra el modal
+        setRole(null);
+        setToken(null);
+        navigate("/login");
+    };
+    
     useEffect(() => {
         setIsLoginOpen(false);
         setIsOpen(false);
@@ -113,11 +115,10 @@ export default function HeaderNavbar() {
                                 >
                                     {role === "admin" ? (
                                         <>
-                                            <Link
-                                                to='/dashboard'
-                                                className='block text-black py-1 border-b-2 border-b-slate-300'
-                                            >
-                                                Dashboard
+                                            <Link 
+                                                to="/dashboard/DashBoardUsers" 
+                                                className="block text-black py-1">
+                                                Administrar Usuarios
                                             </Link>
                                             <Link
                                                 to='/manage_products'
@@ -126,9 +127,11 @@ export default function HeaderNavbar() {
                                                 Administrar Productos
                                             </Link>
                                             <Link
-                                                to='#'
-                                                className='block text-black py-1'
-                                                onClick={handleLogout}
+                                                to="#"
+                                                className="block text-black py-1"
+                                                onClick={() =>
+                                                    setIsLogoutModalOpen(true)
+                                                }
                                             >
                                                 Logout
                                             </Link>
@@ -148,9 +151,11 @@ export default function HeaderNavbar() {
                                                 Perfil
                                             </Link>
                                             <Link
-                                                to='#'
-                                                className='block text-black py-1'
-                                                onClick={handleLogout}
+                                                to="#"
+                                                className="block text-black py-1"
+                                                onClick={() =>
+                                                    setIsLogoutModalOpen(true)
+                                                }
                                             >
                                                 Logout
                                             </Link>
@@ -214,11 +219,8 @@ export default function HeaderNavbar() {
                                 >
                                     {role === "admin" ? (
                                         <>
-                                            <Link
-                                                to='/dashboard'
-                                                className='block text-black py-1 border-b-2 border-b-slate-300'
-                                            >
-                                                Dashboard
+                                            <Link to="/dashboard/DashBoardUsers" className="block text-black py-1">
+                                                Administrar Usuarios
                                             </Link>
                                             <Link
                                                 to='/manage_products'
@@ -227,9 +229,11 @@ export default function HeaderNavbar() {
                                                 Administrar Productos
                                             </Link>
                                             <Link
-                                                to='#'
-                                                className='block text-black py-1'
-                                                onClick={handleLogout}
+                                                to="#"
+                                                className="block text-black py-1"
+                                                onClick={() =>
+                                                    setIsLogoutModalOpen(true)
+                                                }
                                             >
                                                 Logout
                                             </Link>
@@ -249,9 +253,11 @@ export default function HeaderNavbar() {
                                                 Perfil
                                             </Link>
                                             <Link
-                                                to='#'
-                                                className='block text-black py-1'
-                                                onClick={handleLogout}
+                                                to="#"
+                                                className="block text-black py-1"
+                                                onClick={() =>
+                                                    setIsLogoutModalOpen(true)
+                                                }
                                             >
                                                 Logout
                                             </Link>
@@ -329,6 +335,30 @@ export default function HeaderNavbar() {
                     </>
                 )}
             </header>
+            {/* Modal de confirmación */}
+            {isLogoutModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="bg-white rounded-lg p-6 shadow-lg text-center">
+                        <h2 className="text-lg font-bold mb-4">
+                            ¿Estás seguro de que deseas cerrar sesión?
+                        </h2>
+                        <div className="flex justify-center gap-4">
+                            <button
+                                className="bg-red-500 text-white px-4 py-2 rounded"
+                                onClick={handleLogout}
+                            >
+                                Sí
+                            </button>
+                            <button
+                                className="bg-gray-300 px-4 py-2 rounded"
+                                onClick={() => setIsLogoutModalOpen(false)}
+                            >
+                                No
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

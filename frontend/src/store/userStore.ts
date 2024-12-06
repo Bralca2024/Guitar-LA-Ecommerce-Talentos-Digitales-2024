@@ -54,12 +54,13 @@ export const useUserStore = create<UserState>((set) => ({
     getOneUser: async (userID) => {
         set({ loading: true });
         try {
-        const response = await axios.get(`${BASE_URL}/users/${userID}`);
-        const validatedUser = UserSchema.parse(response.data);
-        set({ selectedUser: validatedUser, loading: false });
+            const response = await axios.get(`${BASE_URL}/users/${userID}`);
+            console.log("API Response:", response.data); // Debug
+            const validatedUser = UserSchema.parse(response.data);
+            set({ selectedUser: validatedUser, loading: false });
         } catch (error) {
-        console.error(`Error fetching user with ID ${userID}:`, error);
-        set({ selectedUser: null, loading: false });
+            console.error(`Error fetching user with ID ${userID}:`, error);
+            set({ selectedUser: null, loading: false });
         }
     },
 
