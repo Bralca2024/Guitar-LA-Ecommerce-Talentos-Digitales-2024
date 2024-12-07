@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Bars2Icon, ShoppingCartIcon } from "@heroicons/react/24/solid";
 import { useAuthStore } from "../../store/authStore";
+import { useCartStore } from "../../store/cartStore";
 
 const navlinks = [
     { path: "/", pageName: "Inicio" },
@@ -13,12 +14,16 @@ const navlinks = [
 ];
 
 export default function HeaderNavbar() {
-    const {role, setRole, setToken} = useAuthStore();
+    const { role, setRole, setToken } = useAuthStore();
+    const { cart, removeFromCart, clearCart } = useCartStore();
     const [isOpen, setIsOpen] = useState(false);
     const [isLoginOpen, setIsLoginOpen] = useState(false);
+    const [isCartOpen, setIsCartOpen] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
+
+    const hasItemsInCart = cart.length > 0;
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
@@ -28,11 +33,21 @@ export default function HeaderNavbar() {
         setIsLoginOpen(!isLoginOpen);
     };
 
+    const toggleCartMenu = (event?: React.MouseEvent) => {
+        event?.stopPropagation();
+        setIsCartOpen(!isCartOpen);
+    };
+
     const handleLogout = () => {
-      setRole(null)
-      setToken(null)
-      navigate('/login')
-    }
+        setRole(null);
+        setToken(null);
+        navigate("/login");
+    };
+
+    const totalPrice = cart.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+    );
 
     useEffect(() => {
         setIsLoginOpen(false);
@@ -47,6 +62,25 @@ export default function HeaderNavbar() {
         return () => clearTimeout(timer);
     }, []);
 
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                !(event.target instanceof Element) || // Asegura que event.target sea un Elemento
+                (!event.target.closest(".cart") &&
+                    !event.target.closest(".toggle-cart"))
+            ) {
+                setIsCartOpen(false);
+            }
+        };
+
+        if (isCartOpen) {
+            document.addEventListener("click", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("click", handleClickOutside);
+        };
+    }, [isCartOpen]);
 
     return (
         <div>
@@ -72,7 +106,7 @@ export default function HeaderNavbar() {
                     {/* Menu Toggle Button */}
                     <div className='flex items-center justify-center'>
                         <button
-                            className='block lg:hidden text-white focus:outline-none z-40'
+                            className='block lg:hidden text-white focus:outline-none z-40 cart'
                             onClick={toggleMenu}
                         >
                             {isOpen ? (
@@ -86,12 +120,92 @@ export default function HeaderNavbar() {
                         <div className='flex gap-4'>
                             <button
                                 type='button'
-                                className={`z-10 ${
-                                    isOpen ? "hidden" : "block"
-                                } lg:hidden cursor-pointer`}
+                                className='z-10 cursor-pointer lg:hidden'
+                                onClick={toggleCartMenu}
                             >
-                                <ShoppingCartIcon className='h-8 w-8 text-white ml-8' />
+                                {hasItemsInCart ? (
+                                    <ShoppingCartIcon className='h-8 w-8 text-green-500 ml-8' />
+                                ) : (
+                                    <ShoppingCartIcon className='h-8 w-8 text-white ml-8' />
+                                )}
                             </button>
+                            {isCartOpen && (
+                                <div
+                                    className='cart absolute right-0 top-20 bg-white shadow-lg w-64 rounded-lg p-4 z-20'
+                                    onClick={(e) => e.stopPropagation()} // Evitar cerrar al interactuar dentro
+                                >
+                                    {/* Botón para cerrar el carrito */}
+                                    <button
+                                        className='absolute top-2 right-2 text-gray-600 hover:text-black'
+                                        onClick={() => setIsCartOpen(false)}
+                                    >
+                                        ✕
+                                    </button>
+
+                                    <h3 className='text-xl font-bold mb-4'>
+                                        Carrito de Compras
+                                    </h3>
+                                    {cart.length === 0 ? (
+                                        <p>No hay productos en el carrito.</p>
+                                    ) : (
+                                        <div className='max-h-64 overflow-y-auto'>
+                                            <ul>
+                                                {cart.map((item) => (
+                                                    <li
+                                                        key={item._id}
+                                                        className='flex justify-between items-center py-2 border-b'
+                                                    >
+                                                        <div>
+                                                            <h4 className='text-lg font-semibold'>
+                                                                {
+                                                                    item.productName
+                                                                }
+                                                            </h4>
+                                                            <p className='text-sm'>
+                                                                Cantidad:{" "}
+                                                                {item.quantity}
+                                                            </p>
+                                                            <p className='text-sm'>
+                                                                Total: $
+                                                                {(
+                                                                    item.price *
+                                                                    item.quantity
+                                                                ).toFixed(2)}
+                                                            </p>
+                                                        </div>
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation(); // Evita cerrar el carrito
+                                                                removeFromCart(
+                                                                    item._id
+                                                                );
+                                                            }}
+                                                            className='bg-red-600 text-white py-1 px-2 rounded-md text-sm'
+                                                        >
+                                                            Eliminar
+                                                        </button>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                            <div className='mt-4'>
+                                                <h4>
+                                                    Total: $
+                                                    {totalPrice.toFixed(2)}
+                                                </h4>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation(); // Evita cerrar el carrito
+                                                        clearCart();
+                                                    }}
+                                                    className='mt-2 bg-orange-600 text-white py-2 px-4 rounded-md text-sm'
+                                                >
+                                                    Vaciar Carrito
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                             <div className='flex lg:hidden relative'>
                                 <button
                                     type='button'
@@ -190,9 +304,91 @@ export default function HeaderNavbar() {
                             <button
                                 type='button'
                                 className='z-10 cursor-pointer'
+                                onClick={toggleCartMenu}
                             >
-                                <ShoppingCartIcon className='h-8 w-8 text-white ml-8' />
+                                {hasItemsInCart ? (
+                                    <ShoppingCartIcon className='h-8 w-8 text-green-500 ml-8' />
+                                ) : (
+                                    <ShoppingCartIcon className='h-8 w-8 text-white ml-8' />
+                                )}
                             </button>
+                            {isCartOpen && (
+                                <div
+                                    className='cart absolute right-0 top-20 bg-white shadow-lg w-64 rounded-lg p-4 z-20'
+                                    onClick={(e) => e.stopPropagation()} // Evitar cerrar al interactuar dentro
+                                >
+                                    {/* Botón para cerrar el carrito */}
+                                    <button
+                                        className='absolute top-2 right-2 text-gray-600 hover:text-black'
+                                        onClick={() => setIsCartOpen(false)}
+                                    >
+                                        ✕
+                                    </button>
+
+                                    <h3 className='text-xl font-bold mb-4'>
+                                        Carrito de Compras
+                                    </h3>
+                                    {cart.length === 0 ? (
+                                        <p>No hay productos en el carrito.</p>
+                                    ) : (
+                                        <div className='max-h-64 overflow-y-auto'>
+                                            <ul>
+                                                {cart.map((item) => (
+                                                    <li
+                                                        key={item._id}
+                                                        className='flex justify-between items-center py-2 border-b'
+                                                    >
+                                                        <div>
+                                                            <h4 className='text-lg font-semibold'>
+                                                                {
+                                                                    item.productName
+                                                                }
+                                                            </h4>
+                                                            <p className='text-sm'>
+                                                                Cantidad:{" "}
+                                                                {item.quantity}
+                                                            </p>
+                                                            <p className='text-sm'>
+                                                                Total: $
+                                                                {(
+                                                                    item.price *
+                                                                    item.quantity
+                                                                ).toFixed(2)}
+                                                            </p>
+                                                        </div>
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation(); // Evita cerrar el carrito
+                                                                removeFromCart(
+                                                                    item._id
+                                                                );
+                                                            }}
+                                                            className='bg-red-600 text-white py-1 px-2 rounded-md text-sm'
+                                                        >
+                                                            Eliminar
+                                                        </button>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                            <div className='mt-4'>
+                                                <h4>
+                                                    Total: $
+                                                    {totalPrice.toFixed(2)}
+                                                </h4>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation(); // Evita cerrar el carrito
+                                                        clearCart();
+                                                    }}
+                                                    className='mt-2 bg-orange-600 text-white py-2 px-4 rounded-md text-sm'
+                                                >
+                                                    Vaciar Carrito
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                             <div className='flex relative'>
                                 <button
                                     type='button'
