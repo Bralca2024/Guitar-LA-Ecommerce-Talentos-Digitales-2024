@@ -242,7 +242,7 @@ export default function HeaderNavbar() {
                                                 to='/dashboard/DashBoardUsers'
                                                 className='block text-black py-1 border-b-2 border-b-slate-300'
                                             >
-                                                Dashboard
+                                                Administrar Usuarios
                                             </Link>
                                             <Link
                                                 to='/DashboardProducts'
@@ -438,7 +438,7 @@ export default function HeaderNavbar() {
                                                 to='/dashboard/DashBoardUsers'
                                                 className='block text-black py-1 border-b-2 border-b-slate-300'
                                             >
-                                                Dashboard
+                                                Administrar Usuarios
                                             </Link>
                                             <Link
                                                 to='/DashboardProducts'
