@@ -50,13 +50,25 @@ const getAllUsersHandler = async (req, res) => {
     const {name} = req.query;
     if(name){
       const response = await getUserByNameController(name);
-      res.status(200).send(response);
+      res.status(200).json({
+        success: true,
+        data: response
+      });
+      
     } else {
       const response = await getAllUsersController();
-      res.status(200).send(response);
+      res.status(200).json({
+        success: true,
+        data: response
+      });
+      
     }
   } catch (error) {
-    res.status(400).send({Error: error.message});
+    res.status(400).json({
+      success: false,
+      error: error.message
+    });
+    
   }
 }
 

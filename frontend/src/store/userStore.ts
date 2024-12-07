@@ -36,20 +36,32 @@ export const useUserStore = create<UserState>((set) => ({
     fetchAllUsers: async () => {
         set({ loading: true });
         try {
-        const response = await axios.get(`${BASE_URL}/users`);
-        const usersData = response.data;
-
-        const validatedUsers = usersData.map((user: UserType) =>
-            UserSchema.parse(user)
-        );
-
-        set({ allUsers: validatedUsers, loading: false });
+            const response = await axios.get(`${BASE_URL}/users/`);
+            console.log("Respuesta de la API:", response.data);
+    
+            // Acceder al arreglo de usuarios dentro de la propiedad `data`
+            const usersData = response.data.data;
+    
+            if (Array.isArray(usersData)) {
+                try {
+                    const validatedUsers = usersData.map((user: UserType) =>
+                        UserSchema.parse(user)
+                    );
+                    set({ allUsers: validatedUsers, loading: false });
+                } catch (validationError) {
+                    console.error("Error de validación:", validationError);
+                    set({ loading: false });
+                }
+            } else {
+                console.error("Los datos de usuarios no son un arreglo:", usersData);
+                set({ loading: false });
+            }
         } catch (error) {
-        console.error("Error busqueda de usuarios:", error);
-        set({ loading: false });
+            console.error("Error buscando usuarios:", error);
+            set({ loading: false });
         }
-    },
-
+    },    
+    
     // Obtener un usuario por ID
     getOneUser: async (userID) => {
         set({ loading: true });

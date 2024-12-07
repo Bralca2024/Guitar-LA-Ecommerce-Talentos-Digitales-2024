@@ -2,8 +2,9 @@ import User from '../schema/Users.js'
 import bcrypt from 'bcryptjs'
 
 const getAllUsersController = async () => {
-    if (!User.length) throw new Error("No hay usuarios");
-    return await User.find();
+    const users = await User.find();
+    if (!users.length) throw new Error("No hay usuarios");
+    return users;
 }
 
 const getUserByNameController = async (name) =>{

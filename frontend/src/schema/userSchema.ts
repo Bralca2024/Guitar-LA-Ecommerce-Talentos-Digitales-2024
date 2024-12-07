@@ -6,9 +6,9 @@ const UserSchema = z.object({
     email: z.string().email("Debe ser un email válido"),
     password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
     fullName: z.string().min(3, "El nombre completo debe tener al menos 3 caracteres"),
-    dateOfBirth: z.string().optional(), // Fecha de nacimiento como string ISO (opcional)
-    phone: z.string().optional(), // Teléfono (opcional)
-    address: z.string().optional(), // Dirección (opcional)
+    dateOfBirth: z.string().optional().nullable(), // Fecha de nacimiento como string ISO (opcional)
+    phone: z.string().optional().nullable(), // Teléfono (opcional)
+    address: z.string().optional().nullable(), // Dirección (opcional)
     role: z.enum(["admin", "user"]).default("user"), // Enum para roles
     createdAt: z.string().optional(), // Fecha de creación como string ISO (opcional)
 });
