@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-
+import PrivateRoute from "./components/routes/PrivateRoute";
 /* Common */
 import HeaderNavbar from "./components/common/HeaderNavbar";
 import Footer from "./components/common/Footer";
@@ -15,8 +15,10 @@ import ProductsStoragePage from "./components/pages/ProductsStorePage";
 import ProductIDetailsPage from "./components/pages/ProductIDetailsPage";
 import BlogsPage from "./components/pages/BlogsPage";
 import ContactPage from "./components/pages/ContactPage";
+import ProfilePage from "./components/pages/ProfilePage";
 /* Dashboard */
 import DashboardProducts from "./components/dashboard/DashboardProducts";
+import DashboardUsers from "./components/dashboard/DashBoardUsers";
 /* Auth */
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
@@ -51,6 +53,26 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/DashboardProducts" element={<DashboardProducts />} />
+
+        {/* Rutas protegidas */}
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <ProfilePage />
+            </PrivateRoute>
+          }
+        />
+
+        {/* Rutas protegidas para administradores */}
+        <Route
+          path="/dashboard/DashBoardUsers"
+          element={
+            <PrivateRoute requiredRole="admin">
+              <DashboardUsers />
+            </PrivateRoute>
+          }
+        />
       </Routes>
       <Footer />
     </>

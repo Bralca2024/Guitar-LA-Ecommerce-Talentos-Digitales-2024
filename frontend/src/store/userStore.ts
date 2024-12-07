@@ -45,7 +45,7 @@ export const useUserStore = create<UserState>((set) => ({
 
         set({ allUsers: validatedUsers, loading: false });
         } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error("Error busqueda de usuarios:", error);
         set({ loading: false });
         }
     },
@@ -54,14 +54,21 @@ export const useUserStore = create<UserState>((set) => ({
     getOneUser: async (userID) => {
         set({ loading: true });
         try {
-        const response = await axios.get(`${BASE_URL}/users/${userID}`);
-        const validatedUser = UserSchema.parse(response.data);
-        set({ selectedUser: validatedUser, loading: false });
+            console.log("Búsqueda de usuario con ID:", userID); // Depuración
+            const response = await axios.get(`${BASE_URL}/users/${userID}`);
+            console.log("Respuesta API:", response.data); // Depuración
+            try {
+                const validatedUser = UserSchema.parse(response.data);
+                set({ selectedUser: validatedUser, loading: false });
+            } catch (validationError) {
+                console.error("Error de validación:", validationError);
+                set({ selectedUser: null, loading: false });
+            }
         } catch (error) {
-        console.error(`Error fetching user with ID ${userID}:`, error);
-        set({ selectedUser: null, loading: false });
+            console.error(`Error fetching user with ID ${userID}:`, error);
+            set({ selectedUser: null, loading: false });
         }
-    },
+    },    
 
     // Crear un usuario
     createUser: async (userData) => {

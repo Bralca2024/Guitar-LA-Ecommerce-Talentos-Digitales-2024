@@ -14,6 +14,7 @@ const getUserByNameController = async (name) =>{
 
 const getUserByIdController = async (id) => {
     const userById = await User.findById(id);
+    if (!userById) throw new Error("Usuario no encontrado");
     return userById;
 }
 

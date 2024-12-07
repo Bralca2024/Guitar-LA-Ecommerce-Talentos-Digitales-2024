@@ -8,7 +8,7 @@ const usersRouter = Router();
 // Get All Users
 usersRouter.get('/', getAllUsersHandler);
 // Get One User
-usersRouter.get('/:id', getOneUserHandler)
+usersRouter.get('/:id', verifyToken, getOneUserHandler);
 // Create User
 usersRouter.post('/create', verifyToken, authorizeAdmin, createUserHandler);
 // Update User

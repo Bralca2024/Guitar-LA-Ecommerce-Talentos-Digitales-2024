@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
+import { useState } from "react";
 
 type LoginFormData = {
   email: string;
@@ -10,40 +11,56 @@ type LoginFormData = {
 export default function UsersForm() {
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
   const navigate = useNavigate();
-  const {setRole, setToken} = useAuthStore();
+  const { setRole, setToken } = useAuthStore();
+
+  const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
 
   const baseUrl = import.meta.env.VITE_BASE_URL;
 
   const handleLogin = async (data: LoginFormData) => {
+    setMessage(null); // Reinicia el mensaje al intentar iniciar sesión
+
     try {
-      const response = await fetch(`${baseUrl}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+        const response = await fetch(`${baseUrl}/auth/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error del servidor:", errorData);
-        throw new Error("Error al iniciar sesión");
-      }
+        const responseData = await response.json();
 
-      const responseData = await response.json();  // Suponiendo que la respuesta tenga el token y el rol
+        if (!response.ok) {
+            // Usa el mensaje del servidor si está disponible
+            const errorMessage = responseData.message || "Ocurrió un error inesperado. Intenta más tarde.";
+            setMessage({ text: errorMessage, type: "error" });
+            return;
+        }
 
-      // Almacena el token y el rol en localStorage
-      setToken(responseData.token)
-      setRole(responseData.user.role)
-      
-      navigate('/') //redirecciona al inicio luego de un inicio de sesion exitoso
-      alert("Inicio de sesión exitoso");
+        // Almacena el token y el rol en el store
+        setToken(responseData.token);
+        setRole(responseData.user.role);
+
+        // Redirecciona al inicio luego de un inicio de sesión exitoso
+        setMessage({ text: "Inicio de sesión exitoso.", type: "success" });
+        navigate('/');
     } catch (error) {
-      console.error(error);
-      alert("Hubo un problema al iniciar sesión");
+        console.error(error);
+        setMessage({ text: "Hubo un problema con la conexión. Revisa tu red e intenta nuevamente.", type: "error" });
     }
   };
 
   return (
     <div className="p-4 border rounded-md shadow-md bg-white max-w-md mx-auto">
+      {message && (
+        <div
+          className={`p-2 mb-4 rounded ${
+            message.type === "success" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+          }`}
+        >
+          {message.text}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit(handleLogin)}>
         <div className="mb-4">
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">

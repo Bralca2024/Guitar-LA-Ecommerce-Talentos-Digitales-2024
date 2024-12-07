@@ -67,7 +67,10 @@ export const useProductStore = create<ProductState>((set) => ({
   },
   createProduct: async (productData) => {
     try {
-      const response = await axios.post(`${BASE_URL}/create`, productData);
+      const response = await axios.post(
+        `${BASE_URL}/products/create`,
+        productData
+      );
       const newProduct = ProductSchema.parse(response.data);
       console.log(newProduct);
 
@@ -82,7 +85,7 @@ export const useProductStore = create<ProductState>((set) => ({
     try {
       const productId = productData.get("_id");
       const response = await axios.put(
-        `${BASE_URL}/update/${productId}`,
+        `${BASE_URL}/products/update/${productId}`,
         productData
       );
       const updatedProduct = ProductSchema.parse(response.data);
@@ -101,7 +104,7 @@ export const useProductStore = create<ProductState>((set) => ({
   },
   deleteProduct: async (productID) => {
     try {
-      await axios.delete(`${BASE_URL}/delete/${productID}`);
+      await axios.delete(`${BASE_URL}/products/delete/${productID}`);
       set((state) => ({
         allProducts: state.allProducts.filter(
           (product) => product._id !== productID

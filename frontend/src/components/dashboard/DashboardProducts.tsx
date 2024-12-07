@@ -84,12 +84,12 @@ export default function DashboardProducts() {
         <tbody>
           {products.map((product) => (
             <tr key={product._id} className="bg-white">
-              <td className="p-4 border border-gray-300 flex items-center justify-center">
+              <td className="p-4 border h-full border-gray-300 flex items-center justify-center">
                 {product.imageUrl ? (
                   <img
                     src={product.imageUrl}
                     alt={product.productName}
-                    className="w-10 h-auto"
+                    className="w-14 object-fill"
                   />
                 ) : (
                   "Sin imagen"
