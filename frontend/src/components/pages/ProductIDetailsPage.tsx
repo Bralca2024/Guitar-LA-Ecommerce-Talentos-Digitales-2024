@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useProductStore } from "../../store/productStore";
 import { useParams } from "react-router-dom";
+import { useCartStore } from "../../store/cartStore";
 import LoadingSpinner from "../LoadingSpinner";
 
 export default function ProductIDetailsPage() {
@@ -11,6 +12,8 @@ export default function ProductIDetailsPage() {
     (state) => state.setSelectedProduct
   );
   const loading = useProductStore((state) => state.loading);
+  const {addToCart} = useCartStore();
+  const [quantity, setQuantity] = useState<number>(1);
 
   useEffect(() => {
     if (id) {
@@ -18,6 +21,16 @@ export default function ProductIDetailsPage() {
       getOneProduct(id);
     }
   }, [getOneProduct, id]);
+
+  const handleAddToCart = () => {
+    if(!selectedProduct) return;
+    const cartItem ={
+      ...selectedProduct,
+      quantity
+    }
+    addToCart(cartItem);
+    alert(`${selectedProduct.productName} añadido al carrito`);
+    }
 
   return (
     <>
@@ -48,6 +61,8 @@ export default function ProductIDetailsPage() {
                     name="quantity"
                     id="quantity"
                     className="border border-slate-200 p-2 mb-6 flex-1"
+                    value={quantity}
+                    onChange={(e) => setQuantity(Number(e.target.value))}
                   >
                     <option value=""> -- </option>
                     <option value="1">1</option>
@@ -63,6 +78,7 @@ export default function ProductIDetailsPage() {
                 <button
                   type="button"
                   className="text-white uppercase font-bold bg-orange-600 py-2 rounded-xl"
+                  onClick={handleAddToCart}
                 >
                   Agregar al carrito
                 </button>
