@@ -18,11 +18,8 @@ export default function HeaderNavbar() {
     const { cart, removeFromCart, clearCart } = useCartStore();
     const [isOpen, setIsOpen] = useState(false);
     const [isLoginOpen, setIsLoginOpen] = useState(false);
-<<<<<<< HEAD
     const [isCartOpen, setIsCartOpen] = useState(false);
-=======
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
->>>>>>> 3b63a2351ec8da95d71ac410a44a4b4e41807d20
     const [isVisible, setIsVisible] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
@@ -43,24 +40,17 @@ export default function HeaderNavbar() {
     };
 
     const handleLogout = () => {
-<<<<<<< HEAD
-=======
         setIsLogoutModalOpen(false); // Cierra el modal
->>>>>>> 3b63a2351ec8da95d71ac410a44a4b4e41807d20
         setRole(null);
         setToken(null);
         navigate("/login");
     };
-<<<<<<< HEAD
 
     const totalPrice = cart.reduce(
         (sum, item) => sum + item.price * item.quantity,
         0
     );
 
-=======
-    
->>>>>>> 3b63a2351ec8da95d71ac410a44a4b4e41807d20
     useEffect(() => {
         setIsLoginOpen(false);
         setIsOpen(false);
@@ -248,21 +238,21 @@ export default function HeaderNavbar() {
                                 >
                                     {role === "admin" ? (
                                         <>
-                                            <Link 
-                                                to='/dashboard'
+                                            <Link
+                                                to='/dashboard/DashBoardUsers'
                                                 className='block text-black py-1 border-b-2 border-b-slate-300'
                                             >
                                                 Dashboard
                                             </Link>
                                             <Link
-                                                to='/manage_products'
+                                                to='/DashboardProducts'
                                                 className='block text-black py-1 border-b-2 border-b-slate-300'
                                             >
                                                 Administrar Productos
                                             </Link>
                                             <Link
-                                                to="#"
-                                                className="block text-black py-1"
+                                                to='#'
+                                                className='block text-black py-1'
                                                 onClick={() =>
                                                     setIsLogoutModalOpen(true)
                                                 }
@@ -285,8 +275,8 @@ export default function HeaderNavbar() {
                                                 Perfil
                                             </Link>
                                             <Link
-                                                to="#"
-                                                className="block text-black py-1"
+                                                to='#'
+                                                className='block text-black py-1'
                                                 onClick={() =>
                                                     setIsLogoutModalOpen(true)
                                                 }
@@ -445,20 +435,20 @@ export default function HeaderNavbar() {
                                     {role === "admin" ? (
                                         <>
                                             <Link
-                                                to='/dashboard'
+                                                to='/dashboard/DashBoardUsers'
                                                 className='block text-black py-1 border-b-2 border-b-slate-300'
                                             >
                                                 Dashboard
                                             </Link>
                                             <Link
-                                                to='/manage_products'
+                                                to='/DashboardProducts'
                                                 className='block text-black py-1 border-b-2 border-b-slate-300'
                                             >
                                                 Administrar Productos
                                             </Link>
                                             <Link
-                                                to="#"
-                                                className="block text-black py-1"
+                                                to='#'
+                                                className='block text-black py-1'
                                                 onClick={() =>
                                                     setIsLogoutModalOpen(true)
                                                 }
@@ -481,8 +471,8 @@ export default function HeaderNavbar() {
                                                 Perfil
                                             </Link>
                                             <Link
-                                                to="#"
-                                                className="block text-black py-1"
+                                                to='#'
+                                                className='block text-black py-1'
                                                 onClick={() =>
                                                     setIsLogoutModalOpen(true)
                                                 }
@@ -565,20 +555,20 @@ export default function HeaderNavbar() {
             </header>
             {/* Modal de confirmación */}
             {isLogoutModalOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                    <div className="bg-white rounded-lg p-6 shadow-lg text-center">
-                        <h2 className="text-lg font-bold mb-4">
+                <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'>
+                    <div className='bg-white rounded-lg p-6 shadow-lg text-center'>
+                        <h2 className='text-lg font-bold mb-4'>
                             ¿Estás seguro de que deseas cerrar sesión?
                         </h2>
-                        <div className="flex justify-center gap-4">
+                        <div className='flex justify-center gap-4'>
                             <button
-                                className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-800 hover:text-white transition-all duration-300"
+                                className='bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-800 hover:text-white transition-all duration-300'
                                 onClick={handleLogout}
                             >
                                 Sí
                             </button>
                             <button
-                                className="bg-gray-300 px-4 py-2 rounded"
+                                className='bg-gray-300 px-4 py-2 rounded'
                                 onClick={() => setIsLogoutModalOpen(false)}
                             >
                                 No
