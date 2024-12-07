@@ -199,6 +199,15 @@ export default function HeaderNavbar() {
                                                     }}
                                                     className='mt-2 bg-orange-600 text-white py-2 px-4 rounded-md text-sm'
                                                 >
+                                                    Comprar
+                                                </button>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation(); // Evita cerrar el carrito
+                                                        clearCart();
+                                                    }}
+                                                    className='mt-2 bg-orange-600 text-white py-2 px-4 rounded-md text-sm'
+                                                >
                                                     Vaciar Carrito
                                                 </button>
                                             </div>
@@ -380,7 +389,16 @@ export default function HeaderNavbar() {
                                                         e.stopPropagation(); // Evita cerrar el carrito
                                                         clearCart();
                                                     }}
-                                                    className='mt-2 bg-orange-600 text-white py-2 px-4 rounded-md text-sm'
+                                                    className='mt-2 mx-1 bg-orange-600 text-white py-2 px-4 rounded-md text-sm'
+                                                >
+                                                    Comprar
+                                                </button>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation(); // Evita cerrar el carrito
+                                                        clearCart();
+                                                    }}
+                                                    className='mt-2 bg-red-600 text-white py-2 px-4 rounded-md text-sm'
                                                 >
                                                     Vaciar Carrito
                                                 </button>
