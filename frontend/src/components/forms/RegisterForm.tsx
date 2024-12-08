@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 type RegisterFormData = {
@@ -6,60 +6,141 @@ type RegisterFormData = {
     email: string;
     password: string;
     fullName: string;
-    dateOfBirth?: string;
-    phone?: string;
-    address?: string;
+    role: 'admin' | 'user';
+    estado: 'activo' | 'inactivo';
+    _id?: string;
+    dateOfBirth?: string | null;
+    phone?: string | null;
+    address?: string | null;
+    createdAt?: string;
 };
 
-export default function RegisterForm() {
+type RegisterFormProps = {
+    user?: RegisterFormData | null; // Permitir que sea null o undefined
+};
+
+export default function RegisterForm({ user }: RegisterFormProps): JSX.Element {
     const baseUrl = import.meta.env.VITE_BASE_URL;
 
-    const { register, handleSubmit, formState: { errors }, reset } = useForm<RegisterFormData>();
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<RegisterFormData>({
+        defaultValues: user || {}, // Si hay un usuario, establecer los valores predeterminados
+    });
     const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
 
+    useEffect(() => {
+        if (user) {
+            reset(user); // Restablecer los valores del formulario con los datos del usuario
+        }
+    }, [user, reset]);
+
     const handleRegister = async (data: RegisterFormData) => {
-    
         setMessage(null);
 
-        const processedData = {
-            ...data,
+        // Eliminar campos que no deben ser enviados al backend
+        const { _id, createdAt, ...processedData } = data;
+
+        // Construir el objeto final a enviar
+        const finalData = {
+            ...processedData,
+            dateOfBirth: data.dateOfBirth || null,
+            phone: data.phone || null,
+            address: data.address || null,
+        };
+
+        try {
+            const response = await fetch(`${baseUrl}/auth/register`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(finalData),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                if (response.status === 409) {
+                    // Error de correo ya registrado
+                    setMessage({ text: errorData.message, type: "error" });
+                } else if (response.status === 400) {
+                    // Error de validación
+                    setMessage({
+                        text: errorData.details?.join("\n") || "Datos inválidos. Revisa los campos.",
+                        type: "error",
+                    });
+                } else {
+                    // Otro tipo de error
+                    setMessage({ text: "Ocurrió un error inesperado. Intenta más tarde.", type: "error" });
+                }
+                return;
+            }
+
+            const responseData = await response.json();
+            setMessage({ text: "Usuario registrado con éxito. Por favor, inicia sesión.", type: "success" });
+            reset();  // Resetear el formulario después de un registro exitoso
+            console.log(responseData);
+        } catch (error) {
+            console.error("Error en el registro:", error);
+            setMessage({ text: "Hubo un problema con la conexión. Por favor, revisa tu red.", type: "error" });
+        }
+    };
+
+    const handleEditUser = async (data: RegisterFormData) => {
+        setMessage(null);
+    
+        const { _id, createdAt, ...processedData } = data;
+    
+        const finalData = {
+            ...processedData,
             dateOfBirth: data.dateOfBirth || null,
             phone: data.phone || null,
             address: data.address || null,
         };
     
         try {
-            const response = await fetch(`${baseUrl}/auth/register`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(processedData),
+            const token = localStorage.getItem("authToken");
+            if (!token) {
+                setMessage({ text: "No se encontró el token de autorización. Por favor, inicia sesión.", type: "error" });
+                return; // Detener la ejecución si no hay token
+            }
+
+            const response = await fetch(`${baseUrl}/users/update/${data._id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(finalData),
             });
     
             if (!response.ok) {
-                const errorData = await response.json();
-    
-                if (response.status === 409) {
-                    setMessage({ text: errorData.message, type: "error" });
-                } else if (response.status === 400) {
-                    setMessage({
-                        text: errorData.details?.join("\n") || "Datos inválidos. Revisa los campos.",
-                        type: "error",
-                    });
+                const contentType = response.headers.get("Content-Type");
+                if (contentType && contentType.includes("application/json")) {
+                    const errorData = await response.json();
+                    setMessage({ text: errorData.message || "Error inesperado", type: "error" });
                 } else {
-                    setMessage({ text: "Ocurrió un error inesperado. Intenta más tarde.", type: "error" });
+                    const errorText = await response.text();
+                    setMessage({ text: errorText || "Error inesperado", type: "error" });
                 }
                 return;
             }
     
             const responseData = await response.json();
-            setMessage({ text: "Usuario registrado con éxito. Por favor, inicia sesión.", type: "success" });
-            reset();
+            setMessage({ text: "Usuario actualizado con éxito.", type: "success" });
             console.log(responseData);
         } catch (error) {
-            console.error("Error en el registro:", error);
+            console.error("Error al actualizar el usuario:", error);
             setMessage({ text: "Hubo un problema con la conexión. Por favor, revisa tu red.", type: "error" });
         }
-};
+    };    
+
+    const onSubmit = (data: RegisterFormData) => {
+        if (user && user._id) {
+            // Si el usuario tiene un _id, estamos editando un usuario existente
+            handleEditUser(data);
+        } else {
+            // Si no, estamos registrando un nuevo usuario
+            handleRegister(data);
+        }
+    };
+
 
     return (
         <div className="p-4 border rounded-md shadow-md bg-white max-w-md mx-auto">
@@ -73,7 +154,7 @@ export default function RegisterForm() {
                 </div>
             )}
 
-            <form onSubmit={handleSubmit(handleRegister)}>
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="mb-4">
                     <label htmlFor="username" className="block text-sm font-medium text-gray-700">
                         Usuario
@@ -167,11 +248,27 @@ export default function RegisterForm() {
                     />
                 </div>
 
+                {user?.role === "admin" && (
+                    <div className="mb-4">
+                        <label htmlFor="estado" className="block text-sm font-medium text-gray-700">
+                            Estado
+                        </label>
+                        <select
+                            id="estado"
+                            {...register("estado")}
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
+                        >
+                            <option value="activo">Activo</option>
+                            <option value="inactivo">Inactivo</option>
+                        </select>
+                    </div>
+                )}
+
                 <button
                     type="submit"
                     className="w-full text-lg text-white bg-orange-600 font-bold uppercase py-2 px-4 rounded-xl hover:bg-white hover:text-orange-600 transition-all duration-300"
                 >
-                    Registrarse
+                    {user ? "Actualizar Usuario" : "Registrarse"}
                 </button>
             </form>
         </div>

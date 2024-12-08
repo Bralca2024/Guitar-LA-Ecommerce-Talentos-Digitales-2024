@@ -43,6 +43,8 @@ export default function HeaderNavbar() {
         setIsLogoutModalOpen(false); // Cierra el modal
         setRole(null);
         setToken(null);
+        localStorage.removeItem('token');  // Elimina el token de localStorage
+        localStorage.removeItem('role');   // Elimina el rol de localStorage
         navigate("/login");
     };
 

@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema({
   phone: { type: String },
   address: { type: String },
   role: { type: String, enum: ["admin", "user"], default: "user" },
+  status: { type: String, enum: ["activo", "inactivo"], default: "activo" },
   createdAt: { type: Date, default: Date.now },
 });
 

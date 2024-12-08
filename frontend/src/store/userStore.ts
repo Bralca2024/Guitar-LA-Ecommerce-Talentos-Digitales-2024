@@ -25,7 +25,12 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 export const useUserStore = create<UserState>((set) => ({
     allUsers: [],
     isModalOpen: false,
-    setIsModalOpen: (open) => set({ isModalOpen: open }),
+    setIsModalOpen: (open) => {set({ isModalOpen: open });
+        if (!open) {
+          set({ selectedUser: null }); // Limpia el usuario seleccionado al cerrar
+        }
+    },
+    
     isEditMode: false,
     setIsEditMode: (mode) => set({ isEditMode: mode }),
     loading: false,
@@ -37,8 +42,6 @@ export const useUserStore = create<UserState>((set) => ({
         set({ loading: true });
         try {
             const response = await axios.get(`${BASE_URL}/users/`);
-            console.log("Respuesta de la API:", response.data);
-    
             // Acceder al arreglo de usuarios dentro de la propiedad `data`
             const usersData = response.data.data;
     
@@ -95,21 +98,42 @@ export const useUserStore = create<UserState>((set) => ({
 
     // Actualizar un usuario
     updateUser: async (userID, userData) => {
+        const token = localStorage.getItem("authToken"); // Obtener el token del localStorage
+    
+        if (!token) {
+            console.error("No se encontró el token de autorización.");
+            return; // Detener la ejecución si no hay token
+        }
+    
+        console.log("Token enviado en la solicitud:", token); // Verifica que el token sea correcto
+    
         try {
-        const response = await axios.put(
-            `${BASE_URL}/users/update/${userID}`,
-            userData
-        );
-        const updatedUser = UserSchema.parse(response.data);
-
-        set((state) => ({
-            allUsers: state.allUsers.map((user) =>
-            user._id === updatedUser._id ? updatedUser : user
-            ),
-            selectedUser: null,
-        }));
+            const response = await axios.put(
+                `${BASE_URL}/users/update/${userID}`,
+                userData,
+                {
+                    headers: {
+                        "Authorization": `Bearer ${token}`, // Incluir el token en los encabezados
+                    },
+                }
+            );
+    
+            console.log("Respuesta de la API:", response); // Verifica la respuesta de la API
+    
+            if (response.status !== 200) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+    
+            const updatedUser = UserSchema.parse(response.data); 
+    
+            set((state) => ({
+                allUsers: state.allUsers.map((user) =>
+                    user._id === updatedUser._id ? updatedUser : user
+                ),
+                selectedUser: null, 
+            }));
         } catch (error) {
-        console.error(`Error updating user with ID ${userID}:`, error);
+            console.error(`Error al actualizar usuario con ID ${userID}:`, error);
         }
     },
 

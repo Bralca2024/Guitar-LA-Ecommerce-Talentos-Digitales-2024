@@ -1,16 +1,16 @@
-// components/UserModal.tsx
-import { Fragment } from "react";
-import {
-    Dialog,
-    Transition,
-    DialogPanel,
-    TransitionChild,
-} from "@headlessui/react";
+import { Fragment, useEffect } from "react";
+import { Dialog, Transition, DialogPanel, TransitionChild } from "@headlessui/react";
 import { useUserStore } from "../../store/userStore"; // Estado global de usuarios
-import UserForm from "../forms/UsersForm"; // Formulario de usuarios
+import RegisterForm from "../forms/RegisterForm";
 
 const UserModal = () => {
-    const { setIsModalOpen, isModalOpen, isEditMode } = useUserStore();
+    const { setIsModalOpen, isModalOpen, isEditMode, selectedUser } = useUserStore(); // Asegúrate de tener acceso al usuario seleccionado
+
+    useEffect(() => {
+        if (isEditMode && selectedUser) {
+            // Cargar los datos del usuario a editar cuando el modal se abre en modo de edición
+        }
+    }, [isEditMode, selectedUser]);
 
     return (
         <Transition appear show={isModalOpen} as={Fragment}>
@@ -54,11 +54,13 @@ const UserModal = () => {
                     </Dialog.Title>
 
                     {/* Formulario de usuario */}
-                    <UserForm />
+                    <RegisterForm user={selectedUser} />
+
+
                     {/* Botones de acción */}
                     <div className="mt-4 flex justify-end">
                     <button
-                        className="bg-gray-400 text-white py-2 px-4 rounded-md mr-2"
+                        className="bg-red-500 text-white py-2 px-4 rounded-md mr-2"
                         onClick={() => setIsModalOpen(false)}
                     >
                         Cancelar

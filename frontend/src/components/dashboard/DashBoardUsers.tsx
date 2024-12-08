@@ -31,11 +31,11 @@ export default function DashboardUsers() {
   }, [fetchAllUsers]); // Elimina `users` como dependencia.
   
   const handleEditClick = (user: UserType) => {
-    setSelectedUser(user);
-    setIsEditMode(true);
-    setIsModalOpen(true);
+    setSelectedUser(user); // Establece el usuario seleccionado
+    setIsEditMode(true); // Activa el modo de edición
+    setIsModalOpen(true); // Abre el modal
   };
-
+  
   const handleCreateClick = () => {
     setIsEditMode(false);
     setIsModalOpen(true);
@@ -73,6 +73,7 @@ export default function DashboardUsers() {
             <th className="border border-slate-200 py-4">Teléfono</th>
             <th className="border border-slate-200 py-4">Dirección</th>
             <th className="border border-slate-200 py-4">Rol</th>
+            <th className="border border-slate-200 py-4">Estado</th>
             <th className="border border-slate-200 py-4">Acciones</th>
           </tr>
         </thead>
@@ -87,6 +88,7 @@ export default function DashboardUsers() {
                 <td className="p-4 border border-gray-300">{user.phone || ""}</td>
                 <td className="p-4 border border-gray-300">{user.address || ""}</td>
                 <td className="p-4 border border-gray-300">{user.role}</td>
+                <td className="p-4 border border-gray-300">{user.status}</td>
                 <td className="p-4 border border-gray-300 text-center">
                   <div className="flex justify-center items-center divide-x divide-gray-300">
                     <button className="pr-2" onClick={() => handleDeleteClick(user._id!)}>
