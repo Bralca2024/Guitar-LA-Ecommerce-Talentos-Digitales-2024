@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { ProductType } from "../../types/type";
 import { useProductStore } from "../../store/productStore";
+import ErrorFormMessage from "../forms/ErrorFormMessage";
 
 const initialState = {
   productName: "",
@@ -14,7 +15,13 @@ const initialState = {
 };
 
 export default function ProductForm() {
-  const { register, handleSubmit, reset } = useForm<ProductType>();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ProductType>();
+
   const selectedProduct = useProductStore((state) => state.selectedProduct);
   const createProduct = useProductStore((state) => state.createProduct);
   const updateProduct = useProductStore((state) => state.updateProduct);
@@ -23,9 +30,9 @@ export default function ProductForm() {
 
   useEffect(() => {
     if (isEditMode && selectedProduct) {
-      reset(selectedProduct);
+      reset(selectedProduct); // Restaura el formulario con los datos del producto seleccionado
     } else {
-      reset(initialState);
+      reset(initialState); // Restablece el formulario a su estado inicial
     }
   }, [selectedProduct, reset, isEditMode]);
 
@@ -61,95 +68,118 @@ export default function ProductForm() {
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="mb-4">
-          <label
-            htmlFor="productName"
-            className="block text-sm font-medium text-gray-700"
-          >
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="bg-white rounded-lg py-10 px-5 "
+      >
+        <div className="mb-2">
+          <label htmlFor="productName" className="text-sm uppercase font-bold">
             Título
           </label>
           <input
             id="productName"
-            {...register("productName", { required: true })}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
-            required
+            className="w-full p-2 border border-gray-200"
+            type="text"
+            placeholder="Nombre del Producto"
+            {...register("productName", {
+              required: "El nombre del producto es obligatorio",
+            })}
           />
+          {errors.productName && (
+            <ErrorFormMessage>{errors.productName.message}</ErrorFormMessage>
+          )}
         </div>
-        <div className="mb-4">
-          <label
-            htmlFor="description"
-            className="block text-sm font-medium text-gray-700"
-          >
+
+        <div className="mb-2">
+          <label htmlFor="description" className="text-sm uppercase font-bold">
             Descripción
           </label>
           <textarea
             id="description"
-            {...register("description", { required: true })}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
-            required
-          />
+            className="w-full p-2 border border-gray-200"
+            placeholder="Descripción del Producto"
+            {...register("description", {
+              required: "La descripción es obligatoria",
+            })}
+          ></textarea>
+          {errors.description && (
+            <ErrorFormMessage>{errors.description.message}</ErrorFormMessage>
+          )}
         </div>
-        <div className="mb-4">
+
+        <div className="mb-2">
           <label
             htmlFor="shortDescription"
-            className="block text-sm font-medium text-gray-700"
+            className="text-sm uppercase font-bold"
           >
             Breve descripción
           </label>
           <textarea
             id="shortDescription"
-            {...register("shortDescription", { required: true })}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
-            required
-          />
+            className="w-full p-2 border border-gray-200"
+            placeholder="Breve descripción del producto"
+            {...register("shortDescription", {
+              required: "La breve descripción es obligatoria",
+            })}
+          ></textarea>
+          {errors.shortDescription && (
+            <ErrorFormMessage>
+              {errors.shortDescription.message}
+            </ErrorFormMessage>
+          )}
         </div>
-        <div className="mb-4">
-          <label
-            htmlFor="price"
-            className="block text-sm font-medium text-gray-700"
-          >
+
+        <div className="mb-2">
+          <label htmlFor="price" className="text-sm uppercase font-bold">
             Precio
           </label>
           <input
             id="price"
             type="number"
-            {...register("price", { required: true })}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
-            required
+            className="w-full p-2 border border-gray-200"
+            placeholder="Precio del Producto"
+            {...register("price", {
+              required: "El precio es obligatorio",
+              min: {
+                value: 1,
+                message: "El precio debe ser mayor que cero.",
+              },
+            })}
           />
+          {errors.price && (
+            <ErrorFormMessage>{errors.price.message}</ErrorFormMessage>
+          )}
         </div>
-        <div className="mb-4">
-          <label
-            htmlFor="stock"
-            className="block text-sm font-medium text-gray-700"
-          >
+
+        <div className="mb-2">
+          <label htmlFor="stock" className="text-sm uppercase font-bold">
             Stock
           </label>
           <input
             id="stock"
             type="number"
-            {...register("stock", { required: true })}
             defaultValue={50}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
-            required
+            className="w-full p-2 border border-gray-200"
+            {...register("stock", { required: "El stock es obligatorio" })}
           />
+          {errors.stock && (
+            <ErrorFormMessage>{errors.stock.message}</ErrorFormMessage>
+          )}
         </div>
-        <div className="mb-4">
-          <label
-            htmlFor="imageFile"
-            className="block text-sm font-medium text-gray-700"
-          >
+
+        <div className="mb-5">
+          <label htmlFor="imageUrl" className="text-sm uppercase font-bold">
             Imagen del producto
           </label>
           <input
             id="imageUrl"
             type="file"
-            {...register("imageUrl")}
             accept=".jpg,.jpeg,.png"
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
+            {...register("imageUrl")}
+            className="w-full p-2 border border-gray-200"
           />
         </div>
+
         <div className="mb-4">
           <label htmlFor="isAvailable" className="flex items-center">
             <input
@@ -162,23 +192,12 @@ export default function ProductForm() {
             Disponible
           </label>
         </div>
-        <div className="flex justify-end mt-4">
-          <button
-            type="button"
-            onClick={() => setIsModalOpen(false)}
-            className="mr-2 bg-gray-400 text-white py-2 px-4 rounded-md"
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            className={`${
-              isEditMode ? "bg-green-600" : "bg-orange-600"
-            } text-white py-2 px-4 rounded-md`}
-          >
-            {isEditMode ? "Actualizar" : "Crear"}
-          </button>
-        </div>
+
+        <input
+          type="submit"
+          className={`bg-orange-600 w-full p-2 text-white uppercase font-bold hover:bg-orange-700 cursor-pointer transition-colors`}
+          value={isEditMode ? "Actualizar Producto" : "Crear Producto"}
+        />
       </form>
     </div>
   );
