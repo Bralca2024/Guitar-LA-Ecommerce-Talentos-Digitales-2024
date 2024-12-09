@@ -1,35 +1,49 @@
 import { Link } from "react-router-dom";
 import { useProductStore } from "../../store/productStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import LoadingSpinner from "../LoadingSpinner";
+import Pagination from "../../utilities/Pagination";
 
-export default function ProductsStoragePage() {
-  const fetchAllproducts = useProductStore((state) => state.fetchAllProducts);
+export default function ProductsStorePage() {
+  const fetchAllProducts = useProductStore((state) => state.fetchAllProducts);
   const allProducts = useProductStore((state) => state.allProducts);
   const loading = useProductStore((state) => state.loading);
 
+  // Estado de paginación
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9;
+
   useEffect(() => {
-    fetchAllproducts();
-  }, [fetchAllproducts]);
+    fetchAllProducts();
+  }, [fetchAllProducts]);
+
+  // Calcula los productos a mostrar en la página actual
+  const indexOfLastProduct = currentPage * itemsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
+  const currentProducts = allProducts.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
+
+  // Calcula el número total de páginas
+  const totalPages = Math.ceil(allProducts.length / itemsPerPage);
 
   return (
     <main>
       <section className="max-w-5xl mx-auto py-16">
-        <h2 className="text-5xl text-center text-orange-600 font-bold mb-10 ">
+        <h2 className="text-5xl text-center text-orange-600 font-bold mb-10">
           Nuestros productos
         </h2>
 
         {loading ? (
-          <>
-            <LoadingSpinner />
-          </>
+          <LoadingSpinner />
         ) : (
           <>
             <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-12 lg:gap-6 md:px-4 place-items">
-              {allProducts.map((product) => (
+              {currentProducts.map((product) => (
                 <div
                   key={product._id}
-                  className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 flex flex-col h-full hover:scale-105 "
+                  className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 flex mb-4 flex-col h-full hover:scale-105"
                 >
                   <div className="flex justify-center mb-4">
                     <img
@@ -60,6 +74,13 @@ export default function ProductsStoragePage() {
                 </div>
               ))}
             </div>
+
+            {/* Componente de Paginación */}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
           </>
         )}
       </section>
