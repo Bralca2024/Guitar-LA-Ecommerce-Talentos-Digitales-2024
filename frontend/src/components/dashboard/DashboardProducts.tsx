@@ -16,6 +16,8 @@ import {
 } from "@headlessui/react";
 import { Fragment } from "react";
 import ProductModal from "../modals/ProductModal";
+import Pagination from "../../utilities/Pagination";
+import LoadingSpinner from "../LoadingSpinner";
 
 export default function DashboardProducts() {
   const fetchAllProducts = useProductStore((state) => state.fetchAllProducts);
@@ -24,17 +26,23 @@ export default function DashboardProducts() {
     (state) => state.setSelectedProduct
   );
   const deleteProduct = useProductStore((state) => state.deleteProduct);
-  const { setIsModalOpen, setIsEditMode } = useProductStore();
+  const { setIsModalOpen, setIsEditMode, loading } = useProductStore();
 
   // Estado para el modal de confirmación
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
   const [productIdToDelete, setProductIdToDelete] = useState<string | null>(
     null
   );
+  // Estado de paginación
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  // Estado para controlar la recarga
+  const [reload, setReload] = useState(0);
 
   useEffect(() => {
     fetchAllProducts();
-  }, [fetchAllProducts]);
+  }, [fetchAllProducts, reload]);
 
   const handleEditClick = (product: ProductType) => {
     setSelectedProduct(product);
@@ -45,7 +53,7 @@ export default function DashboardProducts() {
   const handleCreateClick = async () => {
     setIsEditMode(false);
     setIsModalOpen(true);
-    await fetchAllProducts();
+    setReload((prev) => prev + 1);
   };
 
   const handleDeleteClick = (id: string) => {
@@ -57,10 +65,22 @@ export default function DashboardProducts() {
     if (productIdToDelete) {
       await deleteProduct(productIdToDelete);
       await fetchAllProducts();
+      setReload((prev) => prev + 1);
       setIsConfirmDeleteOpen(false);
       setProductIdToDelete(null);
     }
   };
+
+  // Calcula los productos a mostrar en la página actual
+  const indexOfLastProduct = currentPage * itemsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
+  const currentProducts = products.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
+
+  // Calcula el número total de páginas
+  const totalPages = Math.ceil(products.length / itemsPerPage);
 
   return (
     <div className="py-16 px-8">
@@ -70,51 +90,67 @@ export default function DashboardProducts() {
       <button onClick={() => handleCreateClick()}>
         <PlusIcon className="fixed bottom-4 right-4 h-12 text-white bg-blue-600 rounded-full" />
       </button>
-      <table className="min-w-full border border-collapse mx-auto">
-        <thead>
-          <tr className="bg-gray-300">
-            <th className="border border-slate-200 py-4">Imagen</th>
-            <th className="border border-slate-200 py-4">Nombre</th>
-            <th className="border border-slate-200 py-4">Descripción</th>
-            <th className="border border-slate-200 py-4">Precio</th>
-            <th className="border border-slate-200 py-4">Stock</th>
-            <th className="border border-slate-200 py-4">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((product) => (
-            <tr key={product._id} className="bg-white">
-              <td className="p-4 border h-full border-gray-300 flex items-center justify-center">
-                {product.imageUrl ? (
-                  <img
-                    src={product.imageUrl}
-                    alt={product.productName}
-                    className="w-14 object-fill"
-                  />
-                ) : (
-                  "Sin imagen"
-                )}
-              </td>
-              <td className="p-4 border border-gray-300">
-                {product.productName}
-              </td>
-              <td className="p-4 border border-gray-300 max-w-sm">
-                {product.description}
-              </td>
-              <td className="p-4 border border-gray-300">$ {product.price}</td>
-              <td className="p-4 border border-gray-300">{product.stock}</td>
-              <td className="text-center">
-                <button onClick={() => handleDeleteClick(product._id)}>
-                  <TrashIcon className="h-6 w-6 text-red-600 mr-2 hover:text-red-500 transition duration-300" />
-                </button>
-                <button onClick={() => handleEditClick(product)}>
-                  <PencilSquareIcon className="h-6 w-6 text-green-600 hover:text-green-500 transition duration-300" />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
+        <>
+          <table className="min-w-full border border-collapse mx-auto">
+            <thead>
+              <tr className="bg-gray-300">
+                <th className="border border-slate-200 py-4">Imagen</th>
+                <th className="border border-slate-200 py-4">Nombre</th>
+                <th className="border border-slate-200 py-4">Descripción</th>
+                <th className="border border-slate-200 py-4">Precio</th>
+                <th className="border border-slate-200 py-4">Stock</th>
+                <th className="border border-slate-200 py-4">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentProducts.map((product) => (
+                <tr key={product._id} className="bg-white">
+                  <td className="p-4 border h-full border-gray-300 flex items-center justify-center">
+                    {product.imageUrl ? (
+                      <img
+                        src={product.imageUrl}
+                        alt={product.productName}
+                        className="w-14 object-fill"
+                      />
+                    ) : (
+                      "Sin imagen"
+                    )}
+                  </td>
+                  <td className="p-4 border border-gray-300">
+                    {product.productName}
+                  </td>
+                  <td className="p-4 border border-gray-300 max-w-sm">
+                    {product.description}
+                  </td>
+                  <td className="p-4 border border-gray-300">
+                    $ {product.price}
+                  </td>
+                  <td className="p-4 border border-gray-300">
+                    {product.stock}
+                  </td>
+                  <td className="text-center">
+                    <button onClick={() => handleDeleteClick(product._id)}>
+                      <TrashIcon className="h-6 w-6 text-red-600 mr-2 hover:text-red-500 transition duration-300" />
+                    </button>
+                    <button onClick={() => handleEditClick(product)}>
+                      <PencilSquareIcon className="h-6 w-6 text-green-600 hover:text-green-500 transition duration-300" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </>
+      )}
 
       {/* Modal de Confirmación */}
       {isConfirmDeleteOpen && (
