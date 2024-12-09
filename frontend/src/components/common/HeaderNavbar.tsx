@@ -39,6 +39,16 @@ export default function HeaderNavbar() {
         setIsCartOpen(!isCartOpen);
     };
 
+    const handlePurchase = () => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Debes iniciar sesion para realizar la compra");
+            navigate("/login");
+            return;
+        }
+        navigate("/checkout");
+    };
+
     const handleLogout = () => {
         setIsLogoutModalOpen(false); // Cierra el modal
         setRole(null);
@@ -133,7 +143,7 @@ export default function HeaderNavbar() {
                             </button>
                             {isCartOpen && (
                                 <div
-                                    className='cart absolute right-0 top-20 bg-white shadow-lg w-64 rounded-lg p-4 z-20'
+                                    className='cart absolute right-0 top-20 bg-white shadow-lg w-72 rounded-lg p-4 z-20'
                                     onClick={(e) => e.stopPropagation()} // Evitar cerrar al interactuar dentro
                                 >
                                     {/* Botón para cerrar el carrito */}
@@ -194,24 +204,26 @@ export default function HeaderNavbar() {
                                                     Total: $
                                                     {totalPrice.toFixed(2)}
                                                 </h4>
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation(); // Evita cerrar el carrito
-                                                        clearCart();
-                                                    }}
-                                                    className='mt-2 bg-orange-600 text-white py-2 px-4 rounded-md text-sm'
-                                                >
-                                                    Comprar
-                                                </button>
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation(); // Evita cerrar el carrito
-                                                        clearCart();
-                                                    }}
-                                                    className='mt-2 bg-orange-600 text-white py-2 px-4 rounded-md text-sm'
-                                                >
-                                                    Vaciar Carrito
-                                                </button>
+                                                <div className='flex justify-between'>
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation(); // Evita cerrar el carrito
+                                                            handlePurchase();
+                                                        }}
+                                                        className='mt-2 bg-orange-600 text-white py-2 px-4 rounded-md text-sm'
+                                                    >
+                                                        Comprar
+                                                    </button>
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation(); // Evita cerrar el carrito
+                                                            clearCart();
+                                                        }}
+                                                        className='mt-2 bg-red-600 text-white py-2 px-4 rounded-md text-sm'
+                                                    >
+                                                        Vaciar Carrito
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     )}
@@ -329,7 +341,7 @@ export default function HeaderNavbar() {
                             </button>
                             {isCartOpen && (
                                 <div
-                                    className='cart absolute right-0 top-20 bg-white shadow-lg w-64 rounded-lg p-4 z-20'
+                                    className='cart absolute right-0 top-20 bg-white shadow-lg w-72 rounded-lg p-4 z-20'
                                     onClick={(e) => e.stopPropagation()} // Evitar cerrar al interactuar dentro
                                 >
                                     {/* Botón para cerrar el carrito */}
@@ -339,7 +351,6 @@ export default function HeaderNavbar() {
                                     >
                                         ✕
                                     </button>
-
                                     <h3 className='text-xl font-bold mb-4'>
                                         Carrito de Compras
                                     </h3>
@@ -390,24 +401,26 @@ export default function HeaderNavbar() {
                                                     Total: $
                                                     {totalPrice.toFixed(2)}
                                                 </h4>
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation(); // Evita cerrar el carrito
-                                                        clearCart();
-                                                    }}
-                                                    className='mt-2 mx-1 bg-orange-600 text-white py-2 px-4 rounded-md text-sm'
-                                                >
-                                                    Comprar
-                                                </button>
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation(); // Evita cerrar el carrito
-                                                        clearCart();
-                                                    }}
-                                                    className='mt-2 bg-red-600 text-white py-2 px-4 rounded-md text-sm'
-                                                >
-                                                    Vaciar Carrito
-                                                </button>
+                                                <div className='flex justify-between'>
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation(); // Evita cerrar el carrito
+                                                            handlePurchase();
+                                                        }}
+                                                        className='mt-2 bg-orange-600 text-white py-2 px-4 rounded-md text-sm'
+                                                    >
+                                                        Comprar
+                                                    </button>
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation(); // Evita cerrar el carrito
+                                                            clearCart();
+                                                        }}
+                                                        className='mt-2 bg-red-600 text-white py-2 px-4 rounded-md text-sm'
+                                                    >
+                                                        Vaciar Carrito
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     )}
