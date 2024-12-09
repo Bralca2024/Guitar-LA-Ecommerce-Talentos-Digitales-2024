@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import { useState } from "react";
 import { FingerPrintIcon } from "@heroicons/react/24/solid";
+import { useCartStore } from "../../store/cartStore";
 
 type LoginFormData = {
   email: string;
@@ -13,6 +14,7 @@ export default function UsersForm() {
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
   const navigate = useNavigate();
   const { setRole, setToken } = useAuthStore();
+  const { loadCart } = useCartStore();
 
   const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
 
@@ -36,15 +38,12 @@ export default function UsersForm() {
             setMessage({ text: errorMessage, type: "error" });
             return;
         }
-
-        // Almacena el token y el rol en localStorage
-        localStorage.setItem("token", responseData.token);
-        localStorage.setItem("role", responseData.user.role);
         
         // Almacena el token y el rol en el store
         setToken(responseData.token);
         setRole(responseData.user.role);
 
+        loadCart();
         // Redirecciona al inicio luego de un inicio de sesión exitoso
         setMessage({ text: "Inicio de sesión exitoso.", type: "success" });
         navigate('/');

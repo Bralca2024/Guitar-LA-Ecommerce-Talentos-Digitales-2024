@@ -15,7 +15,7 @@ const navlinks = [
 
 export default function HeaderNavbar() {
     const { role, setRole, setToken } = useAuthStore();
-    const { cart, removeFromCart, clearCart } = useCartStore();
+    const { cart, removeFromCart, clearCart, loadCart } = useCartStore();
     const [isOpen, setIsOpen] = useState(false);
     const [isLoginOpen, setIsLoginOpen] = useState(false);
     const [isCartOpen, setIsCartOpen] = useState(false);
@@ -59,10 +59,25 @@ export default function HeaderNavbar() {
         navigate("/login");
     };
 
+    const handleRemoveFromCart = (productId: string) => {
+        removeFromCart(productId);
+    };
+    
+    const handleClearCart = () => {
+        clearCart();
+    };
+
     const totalPrice = cart.reduce(
         (sum, item) => sum + item.price * item.quantity,
         0
     );
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            loadCart(); // Carga el carrito del usuario actual
+        }
+    }, [localStorage.getItem("token")]); // Reaccionar a cambios en el token
 
     useEffect(() => {
         setIsLoginOpen(false);
@@ -191,9 +206,9 @@ export default function HeaderNavbar() {
                                                         <button
                                                             onClick={(e) => {
                                                                 e.stopPropagation(); // Evita cerrar el carrito
-                                                                removeFromCart(
+                                                                handleRemoveFromCart(
                                                                     item._id
-                                                                );
+                                                                )
                                                             }}
                                                             className='bg-red-600 text-white py-1 px-2 rounded-md text-sm'
                                                         >
@@ -220,7 +235,7 @@ export default function HeaderNavbar() {
                                                     <button
                                                         onClick={(e) => {
                                                             e.stopPropagation(); // Evita cerrar el carrito
-                                                            clearCart();
+                                                            handleClearCart();
                                                         }}
                                                         className='mt-2 bg-red-600 text-white py-2 px-4 rounded-md text-sm'
                                                     >
@@ -388,7 +403,7 @@ export default function HeaderNavbar() {
                                                         <button
                                                             onClick={(e) => {
                                                                 e.stopPropagation(); // Evita cerrar el carrito
-                                                                removeFromCart(
+                                                                handleRemoveFromCart(
                                                                     item._id
                                                                 );
                                                             }}
@@ -417,7 +432,7 @@ export default function HeaderNavbar() {
                                                     <button
                                                         onClick={(e) => {
                                                             e.stopPropagation(); // Evita cerrar el carrito
-                                                            clearCart();
+                                                            handleClearCart();
                                                         }}
                                                         className='mt-2 bg-red-600 text-white py-2 px-4 rounded-md text-sm'
                                                     >
