@@ -24,6 +24,9 @@ import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 /* Utilities */
 import ScrollToTop from "./utilities/ScrollToTop";
+import { CheckoutPage } from "./components/pages/CheckoutPage";
+import { PaymentSuccess } from "./components/paymentComponents/PaymentSuccess";
+import { PaymentFailure } from "./components/paymentComponents/PaymentFailure";
 
 function App() {
   return (
@@ -53,6 +56,9 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/DashboardProducts" element={<DashboardProducts />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} /> 
+        <Route path="/payment-failure" element={<PaymentFailure />} /> 
 
         {/* Rutas protegidas */}
         <Route

@@ -13,7 +13,11 @@ type CartState = {
 export const useCartStore = create<CartState>((set) => ({
     cart: (() => {
         try {
-            const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
+            const storedCart = JSON.parse(localStorage.getItem("cart") || "[]").map((item: CartType) => ({
+                ...item,
+                price: Number(item.price),
+                quantity: Number(item.quantity),
+            }));
             return CartSchema.array().parse(storedCart);
         } catch (error) {
             console.error(error);
