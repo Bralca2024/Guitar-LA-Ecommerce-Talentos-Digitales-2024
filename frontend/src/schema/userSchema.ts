@@ -10,6 +10,7 @@ const UserSchema = z.object({
     phone: z.string().optional().nullable(), // Teléfono (opcional)
     address: z.string().optional().nullable(), // Dirección (opcional)
     role: z.enum(["admin", "user"]).default("user"), // Enum para roles
+    status: z.enum(["activo", "inactivo"]).default("activo"), //Estado del usuario 
     createdAt: z.string().optional(), // Fecha de creación como string ISO (opcional)
 });
 

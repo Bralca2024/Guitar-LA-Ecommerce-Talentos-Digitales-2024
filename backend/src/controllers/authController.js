@@ -3,7 +3,7 @@ import User from '../schema/Users.js';
 import jwt from 'jsonwebtoken';
 
 // Registrar un nuevo usuario
-const registerController = async (username, email, password, fullName, dateOfBirth, phone, address, role = 'user') => {
+const registerController = async (username, email, password, fullName, dateOfBirth, phone, address, role = 'user', status = "activo") => {
     // Verifica si el usuario ya existe por email o username
     const userExists = await User.findOne({ $or: [{ email }, { username }] });
     if (userExists) {
@@ -24,6 +24,7 @@ const registerController = async (username, email, password, fullName, dateOfBir
         phone,
         address,
         role,
+        status,
     });
 
     // Guarda al usuario en la base de datos

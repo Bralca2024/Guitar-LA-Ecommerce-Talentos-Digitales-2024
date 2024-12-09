@@ -2,7 +2,7 @@ import express from 'express';
 import morgan from 'morgan';
 import fileUpload from 'express-fileupload';
 import cors from 'cors';
-import mainRouter from './routes/main.js'
+import mainRouter from './routes/main.js';
 
 const app = express();
 

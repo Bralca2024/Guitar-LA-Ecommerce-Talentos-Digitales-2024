@@ -40,6 +40,9 @@ const userSchema = Joi.object({
     role: Joi.string().valid('admin', 'user').default('user').messages({
         'any.only': 'El rol debe ser "admin" o "user".',
     }),
+    status: Joi.string().valid('activo', 'inactivo').default('activo').messages({
+        'any.only': 'El estado debe ser "activo" o "inactivo".',
+    }),
 });
 
 const registerHandler = async (req, res) => {

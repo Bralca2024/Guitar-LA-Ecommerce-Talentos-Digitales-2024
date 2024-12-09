@@ -19,18 +19,17 @@ const getUserByIdController = async (id) => {
     return userById;
 }
 
-const createUserController = async (username, email, password, fullName, dateOfBirth, phone, address, role, createdAt) => {
-const hashPassword = await bcrypt.hash(password, 10);
-const newUser = new User({ username, email, password: hashPassword, fullName, dateOfBirth, phone, address, role, createdAt});
-return await newUser.save();
-}
+const createUserController = async (username, email, password, fullName, dateOfBirth, phone, address, role, status) => {
+    const hashPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({ username, email, password: hashPassword, fullName, dateOfBirth, phone, address, role, status });
+    return await newUser.save();
+};
 
-const updateUserController = async (id, username, email, fullName, dateOfBirth, phone, address ) => {
-    const userData = { username, email, fullName, dateOfBirth, phone, address, };
+const updateUserController = async (id, username, email, fullName, dateOfBirth, phone, address, status) => {
+    const userData = { username, email, fullName, dateOfBirth, phone, address, status };
     const updatedUser = await User.findByIdAndUpdate(id, userData, { new: true });
-
     return updatedUser;
-}
+};
 
 const deleteUserController = async (id) => {
     let deleteUser = await User.findByIdAndDelete(id);
