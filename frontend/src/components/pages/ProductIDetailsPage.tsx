@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useProductStore } from "../../store/productStore";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useCartStore } from "../../store/cartStore";
 import LoadingSpinner from "../LoadingSpinner";
 
@@ -14,6 +14,7 @@ export default function ProductIDetailsPage() {
   const loading = useProductStore((state) => state.loading);
   const {addToCart} = useCartStore();
   const [quantity, setQuantity] = useState<number>(1);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (id) {
@@ -21,16 +22,33 @@ export default function ProductIDetailsPage() {
       getOneProduct(id);
     }
   }, [getOneProduct, id]);
-
   const handleAddToCart = () => {
-    if(!selectedProduct) return;
-    const cartItem ={
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Debes iniciar sesión para realizar la compra");
+      navigate("/login");
+      return;
+    }
+
+    if (!selectedProduct) return;
+
+    const cartItem = {
       ...selectedProduct,
-      quantity
-    }
+      quantity,
+    };
+
     addToCart(cartItem);
-    alert(`${selectedProduct.productName} añadido al carrito`);
-    }
+    alert(`${selectedProduct.productName} añadido al carrito`);
+  };
+
+  if (loading || !selectedProduct) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
 
   return (
     <>
