@@ -5,6 +5,7 @@ import {
   Transition,
   DialogPanel,
   TransitionChild,
+  DialogTitle,
 } from "@headlessui/react";
 import { useProductStore } from "../../store/productStore";
 import ProductForm from "../forms/ProductForm";
@@ -43,12 +44,12 @@ const ProductModal = () => {
               leaveTo="opacity-0 scale-95"
             >
               <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 text-left align-middle shadow-xl transition-all">
-                <Dialog.Title
+                <DialogTitle
                   as="h3"
-                  className="text-lg font-medium leading-6 text-gray-900 mb-4"
+                  className="font-black text-2xl text-center"
                 >
                   {isEditMode ? "Editar Producto" : "Crear Nuevo Producto"}
-                </Dialog.Title>
+                </DialogTitle>
                 <ProductForm />
               </DialogPanel>
             </TransitionChild>

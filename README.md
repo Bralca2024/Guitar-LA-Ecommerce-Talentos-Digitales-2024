@@ -106,5 +106,5 @@ Este proyecto utiliza **Cloudinary** como servicio de alojamiento de imágenes. 
 - Repite el paso anterior y crea el .env en la carpeta del Frontend. Este archivo simplemente contará con los siguientes datos.
 
 ```bash
-VITE_BASE_URL=http://localhost:3000/api/products # URL Base para las peticiones API
+VITE_BASE_URL=http://localhost:3000/api # URL Base para las peticiones API
 ```
