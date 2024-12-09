@@ -53,6 +53,7 @@ export default function HeaderNavbar() {
         setIsLogoutModalOpen(false); // Cierra el modal
         setRole(null);
         setToken(null);
+        clearCart();
         navigate("/login");
     };
 
