@@ -54,6 +54,8 @@ export default function HeaderNavbar() {
         setRole(null);
         setToken(null);
         clearCart();
+        localStorage.removeItem('token');  // Elimina el token de localStorage
+        localStorage.removeItem('role');   // Elimina el rol de localStorage
         navigate("/login");
     };
 

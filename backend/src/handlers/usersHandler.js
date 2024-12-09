@@ -42,8 +42,10 @@ const userSchema = Joi.object({
   role: Joi.string().valid('admin', 'user').default('user').messages({
     'any.only': 'El rol debe ser "admin" o "user".',
   }),
+  status: Joi.string().valid('activo', 'inactivo').default('activo').allow(null, '').messages({
+    'any.only': 'El estado debe ser "activo" o "inactivo".',
+  })
 });
-
 
 const getAllUsersHandler = async (req, res) => {
   try {
@@ -101,8 +103,8 @@ const createUserHandler = async (req, res) => {
     }
 
     // Crear usuario
-    const { username, email, password, fullName, dateOfBirth, phone, address, role } = value;
-    const response = await createUserController(username, email, password, fullName, dateOfBirth, phone, address, role);
+    const { username, email, password, fullName, dateOfBirth, phone, address, role, status } = value;
+    const response = await createUserController(username, email, password, fullName, dateOfBirth, phone, address, role, status);
 
     res.status(201).send(response);
   } catch (error) {
@@ -116,14 +118,24 @@ const createUserHandler = async (req, res) => {
 
 const updateUserHandler = async (req, res) => {
   try {
-    const {id} = req.params;
-    const { username, email, fullName, dateOfBirth, phone, address} = req.body;
-    const response = await updateUserController(id, username, email, fullName, dateOfBirth, phone, address);
+    const { id } = req.params;
+    const { username, email, fullName, dateOfBirth, phone, address, status } = req.body; 
+    const userId = req.userId;
+    const userRole = req.userRole;
+    // Si el estado es "inactivo" y el usuario no es un administrador, no se permite la actualización
+    if (status === "inactivo" && userRole !== "admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Solo los administradores pueden cambiar el estado a inactivo."
+      });
+    } 
+    // Realiza la actualización del usuario
+    const response = await updateUserController(id, username, email, fullName, dateOfBirth, phone, address, status);
     res.send(response);
   } catch (error) {
-    res.status(200).send({Error: error.message});
+    res.status(400).send({ Error: error.message });
   }
-}
+};
 
 const deleteUserHandler = async (req, res) => {
   try {

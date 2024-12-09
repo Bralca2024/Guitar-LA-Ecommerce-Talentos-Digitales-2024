@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import { useState } from "react";
+import { FingerPrintIcon } from "@heroicons/react/24/solid";
 
 type LoginFormData = {
   email: string;
@@ -36,6 +37,10 @@ export default function UsersForm() {
             return;
         }
 
+        // Almacena el token y el rol en localStorage
+        localStorage.setItem("token", responseData.token);
+        localStorage.setItem("role", responseData.user.role);
+        
         // Almacena el token y el rol en el store
         setToken(responseData.token);
         setRole(responseData.user.role);
@@ -48,6 +53,12 @@ export default function UsersForm() {
         setMessage({ text: "Hubo un problema con la conexión. Revisa tu red e intenta nuevamente.", type: "error" });
     }
   };
+  
+  const handleGoogleLogin = async () => {
+    // Redirigir al usuario al endpoint de Google
+    window.location.href = `${baseUrl}/auth/google`;
+  };
+
 
   return (
     <div className="p-4 border rounded-md shadow-md bg-white max-w-md mx-auto">
@@ -99,6 +110,16 @@ export default function UsersForm() {
           Iniciar sesión
         </button>
       </form>
+      <div className="text-center mt-4">
+        <p className="text-gray-600 mb-4">O inicia sesión con:</p>
+        <button
+          onClick={handleGoogleLogin}
+          className="flex items-center justify-center w-full bg-blue-600 text-white py-2 px-4 rounded-xl hover:bg-blue-700 transition-all duration-300"
+        >
+          <FingerPrintIcon className="w-6 h-6 mr-2" /> {/* Aquí usas el ícono de Heroicons */}
+          Iniciar sesión con Google
+        </button>
+      </div>
     </div>
   );
 }
