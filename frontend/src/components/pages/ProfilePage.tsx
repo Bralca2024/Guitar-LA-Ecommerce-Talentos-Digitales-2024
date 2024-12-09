@@ -3,17 +3,21 @@ import { useAuthStore } from "../../store/authStore";
 import { useUserStore } from "../../store/userStore";
 
 export default function ProfilePage() {
-    const { userID } = useAuthStore(); // userID ya está configurado
+    const { userID, token } = useAuthStore();
+    console.log("Estado de authStore:", { userID, token });
+
     const { getOneUser, selectedUser } = useUserStore();
 
     useEffect(() => {
         if (userID) {
-            getOneUser(userID);
+            getOneUser(userID).catch((error) => {
+                console.error("Error al obtener el usuario:", error);
+            });
         } else {
-            console.error("No se encontró userID en ProfilePage.");
+            console.error("userID no está disponible.");
         }
     }, [userID, getOneUser]);
-
+    
     return (
         <div className="container mx-auto py-8">
             <h1 className="text-3xl font-bold mb-4">Mi Perfil</h1>
