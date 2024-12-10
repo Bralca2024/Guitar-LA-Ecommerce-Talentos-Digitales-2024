@@ -27,6 +27,7 @@ import ScrollToTop from "./utilities/ScrollToTop";
 import { CheckoutPage } from "./components/pages/CheckoutPage";
 import { PaymentSuccess } from "./components/paymentComponents/PaymentSuccess";
 import { PaymentFailure } from "./components/paymentComponents/PaymentFailure";
+import { MyOrders } from "./components/pages/MyOrders";
 
 function App() {
   return (
@@ -61,6 +62,12 @@ function App() {
         <Route path="/payment-failure" element={<PaymentFailure />} /> 
 
         {/* Rutas protegidas */}
+        <Route path="/my_orders" element={
+          <PrivateRoute>
+            <MyOrders />
+          </PrivateRoute>
+        } />
+
         <Route
           path="/profile"
           element={
