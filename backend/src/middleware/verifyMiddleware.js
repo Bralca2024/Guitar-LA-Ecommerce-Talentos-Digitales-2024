@@ -31,7 +31,7 @@ const verifyToken = async (req, res, next) => {
             return res.status(404).json({ error: "Usuario no encontrado." });
         }
 
-        if (user.estado !== "activo") {
+        if (user.status !== "activo") {
             return res.status(403).json({ error: "Acceso denegado: Usuario inactivo." });
         }
 

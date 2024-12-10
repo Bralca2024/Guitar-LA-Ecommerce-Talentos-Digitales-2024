@@ -68,27 +68,24 @@ export const useUserStore = create<UserState>((set) => ({
     // Obtener un usuario por ID
     getOneUser: async (userID) => {
         const token = localStorage.getItem("token"); // Obtiene el token de localStorage
-
         if (!token) {
             console.error("No se encontró el token de autorización.");
             return;
         }
-
-        set({ loading: true });
-        try {
-            const response = await axios.get(`${BASE_URL}/users/${userID}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`, // Incluye el token en el encabezado
-                },
-            });
-
-            const validatedUser = UserSchema.parse(response.data);
-            set({ selectedUser: validatedUser });
+        try {console.log("Búsqueda de usuario con ID:", userID); // Depuración
+            const response = await axios.get(`${BASE_URL}/users/${userID}`);
+            console.log("Respuesta API:", response.data); // Depuración
+            try {
+                const validatedUser = UserSchema.parse(response.data);
+                set({ selectedUser: validatedUser, loading: false });
+            } catch (validationError) {
+                console.error("Error de validación:", validationError);
+                set({ selectedUser: null, loading: false });
+            }
         } catch (error) {
             set({ selectedUser: null });
             console.error(`Error fetching user with ID ${userID}:`, error);
-        } finally {
-            set({ loading: false });
+            set({ selectedUser: null, loading: false });
         }
     },    
     

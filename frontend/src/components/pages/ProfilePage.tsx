@@ -3,7 +3,8 @@ import { useAuthStore } from "../../store/authStore";
 import { useUserStore } from "../../store/userStore";
 
 export default function ProfilePage() {
-    const { userID } = useAuthStore();
+    const { userID, token } = useAuthStore();
+    console.log("Estado de authStore:", { userID, token });
 
     const { getOneUser, selectedUser } = useUserStore();
 
