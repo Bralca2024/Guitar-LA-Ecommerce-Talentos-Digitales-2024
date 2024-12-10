@@ -67,9 +67,12 @@ export const useUserStore = create<UserState>((set) => ({
     
     // Obtener un usuario por ID
     getOneUser: async (userID) => {
-        set({ loading: true });
-        try {
-            console.log("Búsqueda de usuario con ID:", userID); // Depuración
+        const token = localStorage.getItem("token"); // Obtiene el token de localStorage
+        if (!token) {
+            console.error("No se encontró el token de autorización.");
+            return;
+        }
+        try {console.log("Búsqueda de usuario con ID:", userID); // Depuración
             const response = await axios.get(`${BASE_URL}/users/${userID}`);
             console.log("Respuesta API:", response.data); // Depuración
             try {
@@ -80,10 +83,12 @@ export const useUserStore = create<UserState>((set) => ({
                 set({ selectedUser: null, loading: false });
             }
         } catch (error) {
+            set({ selectedUser: null });
             console.error(`Error fetching user with ID ${userID}:`, error);
             set({ selectedUser: null, loading: false });
         }
     },    
+    
 
     // Crear un usuario
     createUser: async (userData) => {
@@ -139,13 +144,29 @@ export const useUserStore = create<UserState>((set) => ({
 
     // Eliminar un usuario
     deleteUser: async (userID) => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            console.error("Token de autorización ausente.");
+            return;
+        }
+    
         try {
-        await axios.delete(`${BASE_URL}/users/delete/${userID}`);
-        set((state) => ({
-            allUsers: state.allUsers.filter((user) => user._id !== userID),
-        }));
+            console.log("Intentando eliminar usuario con ID:", userID);
+            await axios.delete(`${BASE_URL}/users/delete/${userID}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            set((state) => ({
+                allUsers: state.allUsers.filter((user) => user._id !== userID),
+            }));
         } catch (error) {
-        console.error(`Error deleting user with ID ${userID}:`, error);
+            if (axios.isAxiosError(error)) {
+                console.error(`Error eliminando usuario con ID ${userID}:`, error.response?.data || error.message);
+            } else if (error instanceof Error) {
+                console.error(`Error genérico eliminando usuario:`, error.message);
+            } else {
+                console.error(`Error desconocido:`, error);
+            }
         }
     },
+    
 }));

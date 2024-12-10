@@ -8,11 +8,11 @@ const usersRouter = Router();
 // Get All Users
 usersRouter.get('/', getAllUsersHandler);
 // Get One User
-usersRouter.get('/:id', verifyToken, getOneUserHandler);
+usersRouter.get('/:id',  verifyToken, getOneUserHandler);
 // Create User
 usersRouter.post('/create', verifyToken, authorizeAdmin, createUserHandler);
 // Update User
-usersRouter.put('/update/:id', verifyToken, authorizeAdmin, updateUserHandler);
+usersRouter.put('/update/:id', verifyToken, updateUserHandler);
 // Delete User
 usersRouter.delete('/delete/:id', verifyToken, authorizeAdmin, deleteUserHandler);
 

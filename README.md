@@ -99,6 +99,8 @@ Este proyecto utiliza **Cloudinary** como servicio de alojamiento de imágenes. 
   CLOUD_NAME=your_cloud_name # Identificador de la cuenta
   CLOUD_API_KEY=your_api_key # Clave pública que permite la autenticación
   CLOUD_API_SECRET=your_api_secret # Clave privada que autentica de manera segura tu aplicación
+  GOOGLE_CLIENT_ID=your_client_id
+  GOOGLE_CLIENT_SECRET=your_client_secret
 ```
 
 ### Accede a la Raíz del Frontend

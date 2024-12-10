@@ -95,7 +95,7 @@ export default function RegisterForm({ user }: RegisterFormProps): JSX.Element {
         };
     
         try {
-            const token = localStorage.getItem("authToken");
+            const token = localStorage.getItem("Token");
             if (!token) {
                 setMessage({ text: "No se encontró el token de autorización. Por favor, inicia sesión.", type: "error" });
                 return; // Detener la ejecución si no hay token
