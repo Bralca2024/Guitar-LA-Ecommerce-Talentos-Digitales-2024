@@ -51,7 +51,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         const token = localStorage.getItem("token");
         if (token) {
         const decoded = decodeJWT(token);
-        return decoded?.userID || decoded?.id || decoded?._id || null; // Asegúrate de que "userID" exista en el payload
+        return decoded?.id || null; // Asegúrate de que "userID" exista en el payload
         }
         return null;
     })(),
@@ -59,7 +59,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         if (token) {
         localStorage.setItem("token", token);
         const decoded = decodeJWT(token);
-        set({ userID: decoded?.userID || null }); // Actualiza userID con el valor del token
+        set({ userID: decoded?.id || null }); // Actualiza userID con el valor del token
         } else {
         localStorage.removeItem("token");
         set({ userID: null });
