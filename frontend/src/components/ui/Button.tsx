@@ -1,4 +1,3 @@
-//generame un componente boton para utilizarlo desde CheckoutPage.tsx
 import { motion } from "framer-motion";
 import { twMerge } from "tailwind-merge";
 
