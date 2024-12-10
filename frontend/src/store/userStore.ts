@@ -147,13 +147,29 @@ export const useUserStore = create<UserState>((set) => ({
 
     // Eliminar un usuario
     deleteUser: async (userID) => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            console.error("Token de autorización ausente.");
+            return;
+        }
+    
         try {
-        await axios.delete(`${BASE_URL}/users/delete/${userID}`);
-        set((state) => ({
-            allUsers: state.allUsers.filter((user) => user._id !== userID),
-        }));
+            console.log("Intentando eliminar usuario con ID:", userID);
+            await axios.delete(`${BASE_URL}/users/delete/${userID}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            set((state) => ({
+                allUsers: state.allUsers.filter((user) => user._id !== userID),
+            }));
         } catch (error) {
-        console.error(`Error deleting user with ID ${userID}:`, error);
+            if (axios.isAxiosError(error)) {
+                console.error(`Error eliminando usuario con ID ${userID}:`, error.response?.data || error.message);
+            } else if (error instanceof Error) {
+                console.error(`Error genérico eliminando usuario:`, error.message);
+            } else {
+                console.error(`Error desconocido:`, error);
+            }
         }
     },
+    
 }));

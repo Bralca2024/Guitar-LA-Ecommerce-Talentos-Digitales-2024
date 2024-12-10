@@ -7,7 +7,7 @@ const verifyToken = async (req, res, next) => {
     if (!authHeader) {
         return res
             .status(401)
-            .send("Acceso denegado: No se proporcionó un token.");
+            .json({ error: "Acceso denegado: No se proporcionó un token." });
     }
 
     // Extraer el token del formato "Bearer <token>"
@@ -16,7 +16,7 @@ const verifyToken = async (req, res, next) => {
     if (!token) {
         return res
             .status(401)
-            .send("Acceso denegado: Formato de token incorrecto.");
+            .json({ error: "Acceso denegado: Formato de token incorrecto." });
     }
 
     try {
@@ -28,25 +28,25 @@ const verifyToken = async (req, res, next) => {
         const user = await User.findById(decoded.id);
 
         if (!user) {
-            return res.status(404).send("Usuario no encontrado.");
+            return res.status(404).json({ error: "Usuario no encontrado." });
         }
 
         if (user.estado !== "activo") {
-            return res.status(403).send("Acceso denegado: Usuario inactivo.");
+            return res.status(403).json({ error: "Acceso denegado: Usuario inactivo." });
         }
 
         // Si el estado es válido, añadir los datos del usuario a `req.user`
         req.user = user;
         next();
     } catch (err) {
-        console.log("Error de verificación del token:", err); // Muestra si hay un error
+        console.error("Error de verificación del token:", err);
         if (err.name === "TokenExpiredError") {
-            return res.status(401).send("El token ha expirado.");
+            return res.status(401).json({ error: "El token ha expirado." });
         }
         if (err.name === "JsonWebTokenError") {
-            return res.status(401).send("El token es inválido.");
+            return res.status(401).json({ error: "El token es inválido." });
         }
-        return res.status(401).send("Error en la verificación del token.");
+        return res.status(401).json({ error: "Error en la verificación del token." });
     }
 };
 

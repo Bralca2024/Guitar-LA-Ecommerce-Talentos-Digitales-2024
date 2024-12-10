@@ -139,11 +139,17 @@ const updateUserHandler = async (req, res) => {
 
 const deleteUserHandler = async (req, res) => {
   try {
-    const {id} = req.params;
-    const response = await deleteUserController(id);
-    res.send(response);
+    const { id } = req.params;
+
+    const user = await User.findByIdAndDelete(id); // Busca y elimina el usuario
+    if (!user) {
+        return res.status(404).json({ error: "Usuario no encontrado." });
+    }
+
+    res.status(200).json({ message: "Usuario eliminado correctamente." });
   } catch (error) {
-    res.status(200).send({Error: error.message});
+      console.error("Error eliminando usuario:", error);
+      res.status(500).json({ error: "Error eliminando usuario." });
   }
 }
 
