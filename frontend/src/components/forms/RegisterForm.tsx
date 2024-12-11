@@ -251,23 +251,6 @@ export default function RegisterForm({ user }: RegisterFormProps): JSX.Element {
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
                     />
                 </div>
-
-                {user?.role === "admin" && (
-                    <div className="mb-4">
-                        <label htmlFor="estado" className="block text-sm font-medium text-gray-700">
-                            Estado
-                        </label>
-                        <select
-                            id="estado"
-                            {...register("status")}
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
-                        >
-                            <option value="activo">Activo</option>
-                            <option value="inactivo">Inactivo</option>
-                        </select>
-                    </div>
-                )}
-
                 <button
                     type="submit"
                     className="w-full text-lg text-white bg-orange-600 font-bold uppercase py-2 px-4 rounded-xl hover:bg-white hover:text-orange-600 transition-all duration-300"

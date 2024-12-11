@@ -13,7 +13,8 @@ import {
   DialogTitle, 
   TransitionChild } from "@headlessui/react";
 import UserModal from "../modals/UserModal"; // Modal para crear/editar usuarios
-
+import Pagination from "../../utilities/Pagination";
+import LoadingSpinner from "../LoadingSpinner";
 
 export default function DashboardUsers() {
   const fetchAllUsers = useUserStore((state) => state.fetchAllUsers);
@@ -21,13 +22,17 @@ export default function DashboardUsers() {
   const setSelectedUser = useUserStore((state) => state.setSelectedUser);
   const deleteUser = useUserStore((state) => state.deleteUser);
   const updateUser = useUserStore((state) => state.updateUser);
-  const { setIsModalOpen, setIsEditMode } = useUserStore();
+  const { setIsModalOpen, setIsEditMode, loading } = useUserStore();
   const [userToChangeStatus, setUserToChangeStatus] = useState<UserType | null>(null);
   
   // Estado para el modal de confirmación
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
   const [isConfirmStatusChangeOpen, setIsConfirmStatusChangeOpen] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState<string | null>(null);
+
+  // Estado para paginación
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 7;
 
   useEffect(() => {
     fetchAllUsers();
@@ -85,7 +90,15 @@ export default function DashboardUsers() {
     }
   };
   
-  
+    // Calcula los usuarios a mostrar en la página actual
+  const indexOfLastUser = currentPage * itemsPerPage;
+  const indexOfFirstUser = indexOfLastUser - itemsPerPage;
+  const reversedUsers = [...users].reverse();
+  const currentUsers = reversedUsers.slice(indexOfFirstUser, indexOfLastUser);
+
+  // Calcula el número total de páginas
+  const totalPages = Math.ceil(users.length / itemsPerPage);
+    
 
   return (
     <div className="py-16 px-8 overflow-x-auto">
@@ -95,6 +108,10 @@ export default function DashboardUsers() {
       <button onClick={handleCreateClick}>
         <PlusIcon className="fixed bottom-4 right-4 h-12 text-white bg-blue-600 rounded-full" />
       </button>
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
+      <>
       <table className="min-w-full border border-collapse mx-auto">
         <thead>
           <tr className="bg-gray-300">
@@ -110,7 +127,8 @@ export default function DashboardUsers() {
           </tr>
         </thead>
         <tbody>
-          {users.map((user) =>
+          {currentUsers 
+          .map((user) =>
             user._id ? (
               <tr key={user._id} className="bg-white">
                 <td className="p-4 border border-gray-300">{user.fullName}</td>
@@ -147,6 +165,14 @@ export default function DashboardUsers() {
           )}
         </tbody>
       </table>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
+
+      </>
+      )}
 
       {/* Modal de Confirmación para el cambio de estado */}
       {isConfirmStatusChangeOpen && (
@@ -184,9 +210,8 @@ export default function DashboardUsers() {
                     </DialogTitle>
                     <div className="mt-2">
                       <p className="text-sm text-gray-700">
-                        Estás a punto de cambiar el estado de usuario{" "}
-                        <strong>{userToChangeStatus?.username}</strong>.
-                        ¿Estás seguro de que deseas continuar? Esta acción cambiará el estado del usuario a{" "}
+                        ¿Estás seguro de que deseas cambiar el estado del usuario {" "}
+                        <strong>{userToChangeStatus?.username}</strong>? Esta acción cambiará el estado del usuario a{" "}
                         <strong>{userToChangeStatus?.status === "activo" ? "inactivo" : "activo"}.</strong>
                       </p>
                     </div>
