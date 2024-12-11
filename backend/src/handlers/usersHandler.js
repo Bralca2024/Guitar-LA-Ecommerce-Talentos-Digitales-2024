@@ -122,13 +122,6 @@ const updateUserHandler = async (req, res) => {
     const { username, email, fullName, dateOfBirth, phone, address, status } = req.body; 
     const userId = req.userId;
     const userRole = req.userRole;
-    // Si el estado es "inactivo" y el usuario no es un administrador, no se permite la actualización
-    if (status === "inactivo" && userRole !== "admin") {
-      return res.status(403).json({
-        success: false,
-        message: "Solo los administradores pueden cambiar el estado a inactivo."
-      });
-    } 
     // Realiza la actualización del usuario
     const response = await updateUserController(id, username, email, fullName, dateOfBirth, phone, address, status);
     res.send(response);

@@ -7,8 +7,8 @@ type RegisterFormData = {
     email: string;
     password: string;
     fullName: string;
-    role: 'admin' | 'user';
-    status: 'activo' | 'inactivo';
+    role: "admin" | "user";
+    status: "activo" | "inactivo";
     _id?: string;
     dateOfBirth?: string | null;
     phone?: string | null;
@@ -76,6 +76,7 @@ export default function RegisterForm({ user }: RegisterFormProps): JSX.Element {
 
             const responseData = await response.json();
             setMessage({ text: "Usuario registrado con éxito. Por favor, inicia sesión.", type: "success" });
+
             reset();  // Resetear el formulario después de un registro exitoso
             console.log(responseData);
         } catch (error) {

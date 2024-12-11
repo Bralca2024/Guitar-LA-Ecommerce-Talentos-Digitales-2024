@@ -103,7 +103,7 @@ export const useUserStore = create<UserState>((set) => ({
 
     // Actualizar un usuario
     updateUser: async (userID, userData) => {
-        const token = localStorage.getItem("Token"); // Obtener el token del localStorage
+        const token = localStorage.getItem("token"); // Obtener el token del localStorage
     
         if (!token) {
             console.error("No se encontró el token de autorización.");

@@ -20,10 +20,13 @@ export default function DashboardUsers() {
   const users = useUserStore((state) => state.allUsers);
   const setSelectedUser = useUserStore((state) => state.setSelectedUser);
   const deleteUser = useUserStore((state) => state.deleteUser);
+  const updateUser = useUserStore((state) => state.updateUser);
   const { setIsModalOpen, setIsEditMode } = useUserStore();
-
+  const [userToChangeStatus, setUserToChangeStatus] = useState<UserType | null>(null);
+  
   // Estado para el modal de confirmación
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+  const [isConfirmStatusChangeOpen, setIsConfirmStatusChangeOpen] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState<string | null>(null);
 
   useEffect(() => {
@@ -54,6 +57,35 @@ export default function DashboardUsers() {
       setUserIdToDelete(null);
     }
   };
+
+  const handleStatusChangeClick = (user: UserType) => {
+    setUserToChangeStatus(user);
+    setIsConfirmStatusChangeOpen(true);
+  };
+
+  const confirmStatusChange = async (newStatus: string) => {
+    if (userToChangeStatus) {
+      const userToUpdate = {
+        ...userToChangeStatus,
+        status: newStatus === "activo" || newStatus === "inactivo" ? (newStatus as "activo" | "inactivo") : "activo",
+      };
+  
+      if (userToUpdate._id) {
+        try {
+          await updateUser(userToUpdate._id, userToUpdate); // Actualiza el usuario
+          await fetchAllUsers(); // Refresca la lista de usuarios
+          setIsConfirmStatusChangeOpen(false); // Cierra el modal
+          setUserToChangeStatus(null); // Limpia el estado
+        } catch (error) {
+          console.error("Error al actualizar el estado del usuario:", error);
+        }
+      } else {
+        console.error("El ID del usuario no está definido.");
+      }
+    }
+  };
+  
+  
 
   return (
     <div className="py-16 px-8 overflow-x-auto">
@@ -88,7 +120,18 @@ export default function DashboardUsers() {
                 <td className="p-4 border border-gray-300">{user.phone || ""}</td>
                 <td className="p-4 border border-gray-300">{user.address || ""}</td>
                 <td className="p-4 border border-gray-300">{user.role}</td>
-                <td className="p-4 border border-gray-300">{user.status}</td>
+                <td className="p-4 border border-gray-300 text-center">
+                  <div className="flex justify-center items-center divide-x divide-gray-300">
+                    <button
+                      onClick={() => handleStatusChangeClick(user)} 
+                      className={`pl-2 ml-2 ${
+                        user.status === "activo" ? "text-green-600" : "text-red-600"
+                      }`}
+                    >
+                      {user.status === "activo" ? "Activo" : "Inactivo"}
+                    </button>
+                  </div>
+                </td>
                 <td className="p-4 border border-gray-300 text-center">
                   <div className="flex justify-center items-center divide-x divide-gray-300">
                     <button className="pr-2" onClick={() => handleDeleteClick(user._id!)}>
@@ -105,7 +148,74 @@ export default function DashboardUsers() {
         </tbody>
       </table>
 
-      {/* Modal de Confirmación */}
+      {/* Modal de Confirmación para el cambio de estado */}
+      {isConfirmStatusChangeOpen && (
+        <Transition appear show={isConfirmStatusChangeOpen} as={Fragment}>
+          <Dialog as="div" className="relative z-10" onClose={() => setIsConfirmStatusChangeOpen(false)}>
+            <TransitionChild
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <div className="fixed inset-0 bg-black bg-opacity-75" />
+            </TransitionChild>
+
+            <div className="fixed inset-0 overflow-y-auto">
+              <div className="flex min-h-full items-center justify-center p-4 text-center">
+                <TransitionChild
+                  as={Fragment}
+                  enter="ease-out duration-300"
+                  enterFrom="opacity-0 scale-95"
+                  enterTo="opacity-100 scale-100"
+                  leave="ease-in duration-200"
+                  leaveFrom="opacity-100 scale-100"
+                  leaveTo="opacity-0 scale-95"
+                >
+                  <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 text-left align-middle shadow-xl transition-all">
+                    <DialogTitle
+                      as="h3"
+                      className="text-lg font-medium leading-6 text-gray-900 mb-4"
+                    >
+                      Confirmar Cambio de Estado
+                    </DialogTitle>
+                    <div className="mt-2">
+                      <p className="text-sm text-gray-700">
+                        Estás a punto de cambiar el estado de usuario{" "}
+                        <strong>{userToChangeStatus?.username}</strong>.
+                        ¿Estás seguro de que deseas continuar? Esta acción cambiará el estado del usuario a{" "}
+                        <strong>{userToChangeStatus?.status === "activo" ? "inactivo" : "activo"}.</strong>
+                      </p>
+                    </div>
+
+                    <div className="flex justify-end mt-4">
+                      <button
+                        type="button"
+                        onClick={() => setIsConfirmStatusChangeOpen(false)}
+                        className="mr-4 bg-gray-500 text-white px-4 py-2 rounded"
+                      >
+                        No
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => confirmStatusChange(userToChangeStatus?.status === "activo" ? "inactivo" : "activo")}
+                        className="bg-blue-600 text-white px-4 py-2 rounded"
+                      >
+                        Sí
+                      </button>
+                    </div>
+                  </DialogPanel>
+                </TransitionChild>
+              </div>
+            </div>
+          </Dialog>
+        </Transition>
+      )}
+
+      {/* Modal de Confirmación para eliminar usuario */}
       {isConfirmDeleteOpen && (
         <Transition appear show={isConfirmDeleteOpen} as={Fragment}>
           <Dialog
