@@ -119,11 +119,11 @@ const createUserHandler = async (req, res) => {
 const updateUserHandler = async (req, res) => {
   try {
     const { id } = req.params;
-    const { username, email, fullName, dateOfBirth, phone, address, status } = req.body; 
+    const { username, email, fullName, dateOfBirth, phone, address, status, role } = req.body; 
     const userId = req.userId;
     const userRole = req.userRole;
     // Realiza la actualización del usuario
-    const response = await updateUserController(id, username, email, fullName, dateOfBirth, phone, address, status);
+    const response = await updateUserController(id, username, email, fullName, dateOfBirth, phone, address, status, role);
     res.send(response);
   } catch (error) {
     res.status(400).send({ Error: error.message });

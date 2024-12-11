@@ -41,7 +41,7 @@ const createUserController = async (username, email, password, fullName, dateOfB
 };
 
 
-const updateUserController = async (id, username, email, fullName, dateOfBirth, phone, address, status) => {
+const updateUserController = async (id, username, email, fullName, dateOfBirth, phone, address, status, role) => {
     // Formatear la fecha si se proporciona
     const formattedDate = format(new Date(dateOfBirth), "yyyy/MM/dd");
 
@@ -52,7 +52,8 @@ const updateUserController = async (id, username, email, fullName, dateOfBirth, 
         dateOfBirth: formattedDate, // Guardar como cadena
         phone, 
         address, 
-        status 
+        status, 
+        role 
     };
 
     const updatedUser = await User.findByIdAndUpdate(id, userData, { new: true });
