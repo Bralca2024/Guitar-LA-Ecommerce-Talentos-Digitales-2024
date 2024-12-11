@@ -1,5 +1,6 @@
-import User from '../schema/Users.js'
-import bcrypt from 'bcryptjs'
+import User from '../schema/Users.js';
+import bcrypt from 'bcryptjs';
+import { format, parseISO } from 'date-fns';
 
 const getAllUsersController = async () => {
     const users = await User.find();
@@ -21,12 +22,39 @@ const getUserByIdController = async (id) => {
 
 const createUserController = async (username, email, password, fullName, dateOfBirth, phone, address, role, status) => {
     const hashPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ username, email, password: hashPassword, fullName, dateOfBirth, phone, address, role, status });
+
+    // Formatear la fecha al formato "dd/MM/yyyy"
+    const formattedDate = format(new Date(dateOfBirth), 'dd/MM/yyyy');
+
+    const newUser = new User({ 
+        username, 
+        email, 
+        password: hashPassword, 
+        fullName, 
+        dateOfBirth: formattedDate,
+        phone, 
+        address, 
+        role, 
+        status 
+    });
     return await newUser.save();
 };
 
+
 const updateUserController = async (id, username, email, fullName, dateOfBirth, phone, address, status) => {
-    const userData = { username, email, fullName, dateOfBirth, phone, address, status };
+    // Formatear la fecha si se proporciona
+    const formattedDate = dateOfBirth ? format(new Date(dateOfBirth), 'dd/MM/yyyy') : undefined;
+
+    const userData = { 
+        username, 
+        email, 
+        fullName, 
+        dateOfBirth: formattedDate, // Guardar como cadena
+        phone, 
+        address, 
+        status 
+    };
+
     const updatedUser = await User.findByIdAndUpdate(id, userData, { new: true });
     return updatedUser;
 };

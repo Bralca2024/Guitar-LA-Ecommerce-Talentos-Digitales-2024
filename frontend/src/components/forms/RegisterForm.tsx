@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { format } from "date-fns";
 
 type RegisterFormData = {
     username: string;
@@ -7,7 +8,7 @@ type RegisterFormData = {
     password: string;
     fullName: string;
     role: 'admin' | 'user';
-    estado: 'activo' | 'inactivo';
+    status: 'activo' | 'inactivo';
     _id?: string;
     dateOfBirth?: string | null;
     phone?: string | null;
@@ -26,10 +27,17 @@ export default function RegisterForm({ user }: RegisterFormProps): JSX.Element {
         defaultValues: user || {}, // Si hay un usuario, establecer los valores predeterminados
     });
     const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
-
+    
     useEffect(() => {
         if (user) {
-            reset(user); // Restablecer los valores del formulario con los datos del usuario
+            // Convertir la fecha a formato yyyy-MM-dd
+            const userWithFormattedDate = {
+                ...user,
+                dateOfBirth: user.dateOfBirth
+                    ? format(new Date(user.dateOfBirth), "yyyy-MM-dd")
+                    : null,
+            };
+            reset(userWithFormattedDate); // Restablecer los valores del formulario con los datos del usuario
         }
     }, [user, reset]);
 
@@ -39,10 +47,16 @@ export default function RegisterForm({ user }: RegisterFormProps): JSX.Element {
         // Eliminar campos que no deben ser enviados al backend
         const { _id, createdAt, ...processedData } = data;
 
+        // Formatear la fecha a DD/MM/YYYY
+        const formattedDate = data.dateOfBirth
+        ? format(new Date(data.dateOfBirth), "dd/MM/yyyy")
+        : null;
+
+
         // Construir el objeto final a enviar
         const finalData = {
             ...processedData,
-            dateOfBirth: data.dateOfBirth || null,
+            dateOfBirth: formattedDate, 
             phone: data.phone || null,
             address: data.address || null,
         };
@@ -56,19 +70,7 @@ export default function RegisterForm({ user }: RegisterFormProps): JSX.Element {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                if (response.status === 409) {
-                    // Error de correo ya registrado
-                    setMessage({ text: errorData.message, type: "error" });
-                } else if (response.status === 400) {
-                    // Error de validación
-                    setMessage({
-                        text: errorData.details?.join("\n") || "Datos inválidos. Revisa los campos.",
-                        type: "error",
-                    });
-                } else {
-                    // Otro tipo de error
-                    setMessage({ text: "Ocurrió un error inesperado. Intenta más tarde.", type: "error" });
-                }
+                setMessage({ text: errorData.message || "Error inesperado.", type: "error" });
                 return;
             }
 
@@ -87,9 +89,13 @@ export default function RegisterForm({ user }: RegisterFormProps): JSX.Element {
     
         const { _id, createdAt, ...processedData } = data;
     
+        const formattedDate = data.dateOfBirth
+        ? format(new Date(data.dateOfBirth), "dd/MM/yyyy")
+        : null;
+
         const finalData = {
             ...processedData,
-            dateOfBirth: data.dateOfBirth || null,
+            dateOfBirth: formattedDate,
             phone: data.phone || null,
             address: data.address || null,
         };
@@ -255,7 +261,7 @@ export default function RegisterForm({ user }: RegisterFormProps): JSX.Element {
                         </label>
                         <select
                             id="estado"
-                            {...register("estado")}
+                            {...register("status")}
                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2"
                         >
                             <option value="activo">Activo</option>

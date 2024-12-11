@@ -151,7 +151,6 @@ export const useUserStore = create<UserState>((set) => ({
         }
     
         try {
-            console.log("Intentando eliminar usuario con ID:", userID);
             await axios.delete(`${BASE_URL}/users/delete/${userID}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });

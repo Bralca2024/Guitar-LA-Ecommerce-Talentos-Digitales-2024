@@ -144,7 +144,30 @@ export default function DashboardUsers() {
                       Confirmar Eliminación
                     </DialogTitle>
                     <div className="mt-2">
-                      <p>¿Estás seguro de que deseas eliminar este usuario?</p>
+                      {/** Encuentra el usuario que se va a eliminar */}
+                      {(() => {
+                        const userToDelete = users.find(
+                          (user) => user._id === userIdToDelete
+                        );
+                        return (
+                          <>
+                            <p className="text-sm text-gray-700">
+                              Estás a punto de eliminar al usuario{" "}
+                              <strong>
+                                {userToDelete?.username || "Desconocido"}
+                              </strong>
+                              . Esta acción es irreversible y resultará en la
+                              eliminación permanente de todos los datos asociados,
+                              como su historial, información personal y cualquier
+                              otra información guardada en el sistema.
+                            </p>
+                            <p className="mt-2 text-sm text-gray-700">
+                              ¿Estás seguro de que deseas continuar con esta operación? 
+                              Si eliminas al usuario, no será posible recuperar sus datos en el futuro.
+                            </p>
+                          </>
+                        );
+                      })()}
                     </div>
 
                     <div className="flex justify-end mt-4">
