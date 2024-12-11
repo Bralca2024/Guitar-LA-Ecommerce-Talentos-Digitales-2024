@@ -72,9 +72,9 @@ export const useUserStore = create<UserState>((set) => ({
             console.error("No se encontró el token de autorización.");
             return;
         }
-        try {console.log("Búsqueda de usuario con ID:", userID); // Depuración
+        try {
             const response = await axios.get(`${BASE_URL}/users/${userID}`);
-            console.log("Respuesta API:", response.data); // Depuración
+            
             try {
                 const validatedUser = UserSchema.parse(response.data);
                 set({ selectedUser: validatedUser, loading: false });
@@ -103,40 +103,35 @@ export const useUserStore = create<UserState>((set) => ({
 
     // Actualizar un usuario
     updateUser: async (userID, userData) => {
-        const token = localStorage.getItem("authToken"); // Obtener el token del localStorage
+        const token = localStorage.getItem("Token"); // Obtener el token del localStorage
     
         if (!token) {
             console.error("No se encontró el token de autorización.");
             return; // Detener la ejecución si no hay token
         }
-    
-        console.log("Token enviado en la solicitud:", token); // Verifica que el token sea correcto
-    
+
         try {
             const response = await axios.put(
                 `${BASE_URL}/users/update/${userID}`,
                 userData,
                 {
                     headers: {
-                        "Authorization": `Bearer ${token}`, // Incluir el token en los encabezados
+                        "Authorization": `Bearer ${token}`, // Incluir el token
                     },
                 }
-            );
-    
-            console.log("Respuesta de la API:", response); // Verifica la respuesta de la API
-    
-            if (response.status !== 200) {
-                throw new Error(`Error: ${response.statusText}`);
+            );    
+            try {
+                const updatedUser = UserSchema.parse(response.data);
+                        
+                set((state) => ({
+                    allUsers: state.allUsers.map((user) =>
+                        user._id === updatedUser._id ? updatedUser : user
+                    ),
+                    selectedUser: null,
+                }));
+            } catch (validationError) {
+                console.error("Error de validación:", validationError);
             }
-    
-            const updatedUser = UserSchema.parse(response.data); 
-    
-            set((state) => ({
-                allUsers: state.allUsers.map((user) =>
-                    user._id === updatedUser._id ? updatedUser : user
-                ),
-                selectedUser: null, 
-            }));
         } catch (error) {
             console.error(`Error al actualizar usuario con ID ${userID}:`, error);
         }

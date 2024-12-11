@@ -27,7 +27,7 @@ export default function RegisterForm({ user }: RegisterFormProps): JSX.Element {
         defaultValues: user || {}, // Si hay un usuario, establecer los valores predeterminados
     });
     const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
-    
+
     useEffect(() => {
         if (user) {
             // Convertir la fecha a formato yyyy-MM-dd
@@ -101,7 +101,7 @@ export default function RegisterForm({ user }: RegisterFormProps): JSX.Element {
         };
     
         try {
-            const token = localStorage.getItem("Token");
+            const token = localStorage.getItem("token");
             if (!token) {
                 setMessage({ text: "No se encontró el token de autorización. Por favor, inicia sesión.", type: "error" });
                 return; // Detener la ejecución si no hay token
@@ -127,10 +127,7 @@ export default function RegisterForm({ user }: RegisterFormProps): JSX.Element {
                 }
                 return;
             }
-    
-            const responseData = await response.json();
             setMessage({ text: "Usuario actualizado con éxito.", type: "success" });
-            console.log(responseData);
         } catch (error) {
             console.error("Error al actualizar el usuario:", error);
             setMessage({ text: "Hubo un problema con la conexión. Por favor, revisa tu red.", type: "error" });
