@@ -139,11 +139,13 @@ export default function DashboardUsers() {
                 <td className="p-4 border border-gray-300">{user.address || ""}</td>
                 <td className="p-4 border border-gray-300">{user.role}</td>
                 <td className="p-4 border border-gray-300 text-center">
-                  <div className="flex justify-center items-center divide-x divide-gray-300">
+                  <div className="flex justify-center items-center">
                     <button
-                      onClick={() => handleStatusChangeClick(user)} 
-                      className={`pl-2 ml-2 ${
-                        user.status === "activo" ? "text-green-600" : "text-red-600"
+                      onClick={() => handleStatusChangeClick(user)}
+                      className={`px-4 py-2 rounded ${
+                        user.status === "activo"
+                          ? "bg-green-600 text-white hover:bg-green-700"
+                          : "bg-red-600 text-white hover:bg-red-700"
                       }`}
                     >
                       {user.status === "activo" ? "Activo" : "Inactivo"}
