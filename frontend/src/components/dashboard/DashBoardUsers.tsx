@@ -35,7 +35,7 @@ export default function DashboardUsers() {
 
   // Estado para paginación
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 7;
+  const itemsPerPage = 5;
 
   useEffect(() => {
     fetchAllUsers();
@@ -356,7 +356,7 @@ export default function DashboardUsers() {
         </Transition>
       )}
 
-      <UserModal />
+      <UserModal onUserChange={fetchAllUsers} />
     </div>
   );
 }

@@ -24,7 +24,7 @@ const userSchema = Joi.object({
         'string.min': 'El nombre completo debe tener al menos 3 caracteres.',
         'string.max': 'El nombre completo no puede exceder los 50 caracteres.',
     }),
-    dateOfBirth: Joi.date().optional().allow(null).messages({
+    dateOfBirth: Joi.string().optional().allow(null).messages({
         'date.base': 'La fecha de nacimiento debe ser una fecha válida.',
     }),
     phone: Joi.string()

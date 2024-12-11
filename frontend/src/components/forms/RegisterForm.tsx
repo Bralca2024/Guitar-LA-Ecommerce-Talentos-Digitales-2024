@@ -18,9 +18,11 @@ type RegisterFormData = {
 
 type RegisterFormProps = {
     user?: RegisterFormData | null; // Permitir que sea null o undefined
+    closeModal: () => void;
+    onUserChange: () => void;
 };
 
-export default function RegisterForm({ user }: RegisterFormProps): JSX.Element {
+export default function RegisterForm({ user, closeModal, onUserChange }: RegisterFormProps): JSX.Element {
     const baseUrl = import.meta.env.VITE_BASE_URL;
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm<RegisterFormData>({
@@ -30,7 +32,7 @@ export default function RegisterForm({ user }: RegisterFormProps): JSX.Element {
 
     useEffect(() => {
         if (user) {
-            // Convertir la fecha a formato yyyy-MM-dd
+            // Convertir la fecha a formato "yyyy/MM/dd"
             const userWithFormattedDate = {
                 ...user,
                 dateOfBirth: user.dateOfBirth
@@ -47,9 +49,9 @@ export default function RegisterForm({ user }: RegisterFormProps): JSX.Element {
         // Eliminar campos que no deben ser enviados al backend
         const { _id, createdAt, ...processedData } = data;
 
-        // Formatear la fecha a DD/MM/YYYY
+        // Formatear la fecha a "yyyy/MM/dd"
         const formattedDate = data.dateOfBirth
-        ? format(new Date(data.dateOfBirth), "dd/MM/yyyy")
+        ? format(new Date(data.dateOfBirth), "yyyy/MM/dd")
         : null;
 
 
@@ -78,6 +80,8 @@ export default function RegisterForm({ user }: RegisterFormProps): JSX.Element {
             setMessage({ text: "Usuario registrado con éxito. Por favor, inicia sesión.", type: "success" });
 
             reset();  // Resetear el formulario después de un registro exitoso
+            onUserChange();
+            closeModal();
             console.log(responseData);
         } catch (error) {
             console.error("Error en el registro:", error);
@@ -91,7 +95,7 @@ export default function RegisterForm({ user }: RegisterFormProps): JSX.Element {
         const { _id, createdAt, ...processedData } = data;
     
         const formattedDate = data.dateOfBirth
-        ? format(new Date(data.dateOfBirth), "dd/MM/yyyy")
+        ? format(new Date(data.dateOfBirth), "yyyy/MM/dd")
         : null;
 
         const finalData = {
@@ -129,6 +133,8 @@ export default function RegisterForm({ user }: RegisterFormProps): JSX.Element {
                 return;
             }
             setMessage({ text: "Usuario actualizado con éxito.", type: "success" });
+            onUserChange();
+            closeModal();
         } catch (error) {
             console.error("Error al actualizar el usuario:", error);
             setMessage({ text: "Hubo un problema con la conexión. Por favor, revisa tu red.", type: "error" });

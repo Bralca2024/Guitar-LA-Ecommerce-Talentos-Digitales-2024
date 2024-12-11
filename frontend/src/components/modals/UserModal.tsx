@@ -1,16 +1,13 @@
-import { Fragment, useEffect } from "react";
+import { Fragment } from "react";
 import { Dialog, Transition, DialogPanel, TransitionChild } from "@headlessui/react";
 import { useUserStore } from "../../store/userStore"; // Estado global de usuarios
 import RegisterForm from "../forms/RegisterForm";
 
-const UserModal = () => {
-    const { setIsModalOpen, isModalOpen, isEditMode, selectedUser } = useUserStore(); // Asegúrate de tener acceso al usuario seleccionado
-
-    useEffect(() => {
-        if (isEditMode && selectedUser) {
-            // Cargar los datos del usuario a editar cuando el modal se abre en modo de edición
-        }
-    }, [isEditMode, selectedUser]);
+interface UserModalProps {
+    onUserChange: () => void; // Callback para actualizar el listado
+}
+const UserModal = ({ onUserChange }: UserModalProps) => {
+    const { setIsModalOpen, isModalOpen, isEditMode, selectedUser } = useUserStore();
 
     return (
         <Transition appear show={isModalOpen} as={Fragment}>
@@ -54,9 +51,12 @@ const UserModal = () => {
                     </Dialog.Title>
 
                     {/* Formulario de usuario */}
-                    <RegisterForm user={selectedUser} />
-
-
+                    <RegisterForm 
+                        user={selectedUser} 
+                        closeModal={() => setIsModalOpen(false)} 
+                        onUserChange={onUserChange}
+                        />
+                        
                     {/* Botones de acción */}
                     <div className="mt-4 flex justify-end">
                     <button

@@ -1,6 +1,6 @@
 import User from '../schema/Users.js';
 import bcrypt from 'bcryptjs';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 
 const getAllUsersController = async () => {
     const users = await User.find();
@@ -23,8 +23,8 @@ const getUserByIdController = async (id) => {
 const createUserController = async (username, email, password, fullName, dateOfBirth, phone, address, role, status) => {
     const hashPassword = await bcrypt.hash(password, 10);
 
-    // Formatear la fecha al formato "dd/MM/yyyy"
-    const formattedDate = format(new Date(dateOfBirth), 'dd/MM/yyyy');
+    // Formatear la fecha al formato "yyyy/MM/dd"
+    const formattedDate = format(new Date(dateOfBirth), "yyyy/MM/dd");
 
     const newUser = new User({ 
         username, 
@@ -43,7 +43,7 @@ const createUserController = async (username, email, password, fullName, dateOfB
 
 const updateUserController = async (id, username, email, fullName, dateOfBirth, phone, address, status) => {
     // Formatear la fecha si se proporciona
-    const formattedDate = dateOfBirth ? format(new Date(dateOfBirth), 'dd/MM/yyyy') : undefined;
+    const formattedDate = format(new Date(dateOfBirth), "yyyy/MM/dd");
 
     const userData = { 
         username, 
