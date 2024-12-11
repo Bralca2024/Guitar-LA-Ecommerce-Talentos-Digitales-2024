@@ -3,6 +3,8 @@ import {
   PlusIcon,
   TrashIcon,
 } from "@heroicons/react/24/solid";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+
 import { useUserStore } from "../../store/userStore"; // Asume que existe un store similar al de productos
 import { useState, useEffect, Fragment } from "react";
 import { UserType } from "../../types/type";
@@ -17,6 +19,7 @@ import Pagination from "../../utilities/Pagination";
 import LoadingSpinner from "../LoadingSpinner";
 
 export default function DashboardUsers() {
+  const [searchTerm, setSearchTerm] = useState("");
   const fetchAllUsers = useUserStore((state) => state.fetchAllUsers);
   const users = useUserStore((state) => state.allUsers);
   const setSelectedUser = useUserStore((state) => state.setSelectedUser);
@@ -36,7 +39,7 @@ export default function DashboardUsers() {
 
   useEffect(() => {
     fetchAllUsers();
-  }, [fetchAllUsers]); // Elimina `users` como dependencia.
+  }, [fetchAllUsers]);
   
   const handleEditClick = (user: UserType) => {
     setSelectedUser(user); // Establece el usuario seleccionado
@@ -90,21 +93,43 @@ export default function DashboardUsers() {
     }
   };
   
-    // Calcula los usuarios a mostrar en la página actual
+  
+  const filteredUsers = users.filter(
+    (user) =>
+      user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Calcula los usuarios a mostrar en la página actual
   const indexOfLastUser = currentPage * itemsPerPage;
   const indexOfFirstUser = indexOfLastUser - itemsPerPage;
-  const reversedUsers = [...users].reverse();
+  const reversedUsers = [...filteredUsers].reverse();
   const currentUsers = reversedUsers.slice(indexOfFirstUser, indexOfLastUser);
 
   // Calcula el número total de páginas
   const totalPages = Math.ceil(users.length / itemsPerPage);
     
-
   return (
     <div className="py-16 px-8 overflow-x-auto">
       <h2 className="text-4xl text-center text-orange-600 mb-12 font-bold min-w-full border border-collapse mx-auto">
         Dashboard de usuarios
       </h2>
+
+      <div className="mb-6 flex justify-center">
+  <div className="relative w-1/2">
+    <input
+      type="text"
+      placeholder="Buscar usuarios por nombre, usuario o email..."
+      className="border border-gray-300 rounded-full px-4 py-2 w-full pr-10 shadow-sm focus:ring-2 focus:ring-orange-600 focus:outline-none transition duration-300"
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+    />
+    <MagnifyingGlassIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+  </div>
+</div>
+
+
       <button onClick={handleCreateClick}>
         <PlusIcon className="fixed bottom-4 right-4 h-12 text-white bg-blue-600 rounded-full" />
       </button>
