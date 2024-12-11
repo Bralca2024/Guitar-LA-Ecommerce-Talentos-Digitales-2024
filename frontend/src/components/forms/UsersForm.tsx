@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import { useState } from "react";
-import { FingerPrintIcon } from "@heroicons/react/24/solid";
+import { FaGoogle } from 'react-icons/fa';
 import { useCartStore } from "../../store/cartStore";
 
 type LoginFormData = {
@@ -115,7 +115,7 @@ export default function UsersForm() {
           onClick={handleGoogleLogin}
           className="flex items-center justify-center w-full bg-blue-600 text-white py-2 px-4 rounded-xl hover:bg-blue-700 transition-all duration-300"
         >
-          <FingerPrintIcon className="w-6 h-6 mr-2" /> {/* Aquí usas el ícono de Heroicons */}
+          <FaGoogle className="w-6 h-6 mr-2" />
           Iniciar sesión con Google
         </button>
       </div>
