@@ -19,6 +19,7 @@ import ProfilePage from "./components/pages/ProfilePage";
 /* Dashboard */
 import DashboardProducts from "./components/dashboard/DashboardProducts";
 import DashboardUsers from "./components/dashboard/DashBoardUsers";
+import DashboardBlogs from "./components/dashboard/DashboardBlogs";
 /* Auth */
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
@@ -57,6 +58,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/DashboardProducts" element={<DashboardProducts />} />
+        <Route path="/DashboardBlogs" element={<DashboardBlogs />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/payment-success" element={<PaymentSuccess />} /> 
         <Route path="/payment-failure" element={<PaymentFailure />} /> 

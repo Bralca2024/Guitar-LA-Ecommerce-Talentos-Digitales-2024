@@ -279,6 +279,12 @@ export default function HeaderNavbar() {
                                                 Administrar Productos
                                             </Link>
                                             <Link
+                                                to='/DashboardBlogs'
+                                                className='block text-black py-1 border-b-2 border-b-slate-300'
+                                            >
+                                                Administrar Blogs
+                                            </Link>
+                                            <Link
                                                 to='#'
                                                 className='block text-black py-1'
                                                 onClick={() =>
@@ -474,6 +480,12 @@ export default function HeaderNavbar() {
                                                 className='block text-black py-1 border-b-2 border-b-slate-300'
                                             >
                                                 Administrar Productos
+                                            </Link>
+                                            <Link
+                                                to='/DashboardBlogs'
+                                                className='block text-black py-1 border-b-2 border-b-slate-300'
+                                            >
+                                                Administrar Blogs
                                             </Link>
                                             <Link
                                                 to='#'
