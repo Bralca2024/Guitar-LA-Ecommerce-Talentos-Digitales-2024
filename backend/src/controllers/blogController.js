@@ -1,6 +1,4 @@
 import Blog from '../schema/blogs.js'; // Importa el esquema Blog
-import { deleteImageFromCloudinary } from '../utilities/cloudinary.js'; // Asegúrate de que la función esté correctamente importada
-
 
 // Obtener todos los blogs
 const getAllBlogsController = async () => {
@@ -36,10 +34,14 @@ const deleteBlogController = async (blogID) => {
     const existBlog = await Blog.findById(blogID);
     if (!existBlog) throw new Error("Blog not found");
 
-    // Si el blog tiene una imagen asociada, elimina la imagen en Cloudinary
+    // Si el blog tiene una imagen asociada, puedes agregar la lógica para eliminarla si es necesario
     if (existBlog.imageUrl) {
-      const publicId = existBlog.imageUrl.split('/').pop().split('.')[0]; // Extrae el publicId de la URL
-      await deleteImageFromCloudinary(`blogs/${publicId}`);
+      // Lógica para eliminar la imagen si es necesario (por ejemplo, si la imagen está en un servidor propio o S3)
+      // Si las imágenes están en un servidor propio, puedes eliminarla del sistema de archivos:
+      // await deleteImageFromServer(existBlog.imageUrl);
+      
+      // Si las imágenes están en otro servicio (por ejemplo, AWS S3), puedes agregar la lógica aquí:
+      // await deleteImageFromS3(existBlog.imageUrl);
     }
 
     // Elimina el blog de la base de datos
