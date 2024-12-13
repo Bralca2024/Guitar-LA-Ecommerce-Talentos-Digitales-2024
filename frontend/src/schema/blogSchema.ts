@@ -7,8 +7,8 @@ const BlogSchema = z.object({
   content: z.string().min(1, "El contenido es requerido"),
   author: z.string().min(1, "El autor es requerido"),
   imageUrl: z.string().url().nullable().optional(), // Puede ser nulo o no proporcionado
-  createdAt: z.date().default(() => new Date()), // Fecha de creación
-  updatedAt: z.date().default(() => new Date()), // Fecha de actualización
+  createdAt: z.date().optional().default(() => new Date()), // Fecha de creación
+  updatedAt: z.date().optional().default(() => new Date()), // Fecha de actualización
   isPublished: z.boolean().default(true), // Estado de publicación del blog
 });
 

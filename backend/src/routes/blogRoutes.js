@@ -16,7 +16,7 @@ blogRouter.post('/create', createBlogHandler);
 blogRouter.put('/update/:id', updateBlogHandler);
 
 // Delete Blog
-blogRouter.delete('/:id', deleteBlogHandler);
+blogRouter.delete('/delete/:id', deleteBlogHandler);
 
 
 export default blogRouter;
