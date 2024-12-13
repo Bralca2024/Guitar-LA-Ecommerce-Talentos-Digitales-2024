@@ -38,26 +38,28 @@ export const useBlogStore = create<BlogState>((set) => ({
       const blogData = response.data;
   
       const validatedBlogs = blogData.map((blog: BlogType) => {
-      
-        // Convertir las cadenas de fechas a objetos Date
+        // Asegúrate de que imageUrl tenga un valor, si no, usa un valor por defecto
         const parsedBlog = {
           ...blog,
+          imageUrl: blog.imageUrl || null,  // Asigna una cadena vacía si no hay imagen
           createdAt: new Date(blog.createdAt), // Convertir createdAt
           updatedAt: new Date(blog.updatedAt), // Convertir updatedAt
         };
   
         return BlogSchema.parse(parsedBlog);
       });
+  
       console.log(validatedBlogs);
   
       set({ allBlogs: validatedBlogs });
       set({ loading: false });
     } catch (error) {
+      console.error(error);
       throw new Error(`Error fetching blogs. ${error}`);
     } finally {
       set({ loading: false });
     }
-  },  
+  },    
   getOneBlog: async (blogID) => {
     set({ loading: true });
     try {

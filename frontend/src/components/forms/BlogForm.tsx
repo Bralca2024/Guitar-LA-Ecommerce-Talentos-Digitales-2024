@@ -41,76 +41,75 @@ export default function BlogForm() {
     const baseUrl = import.meta.env.VITE_BASE_URL;
 
     const handleBlogSubmit = async (data: BlogFormData) => {
-      setMessage(null);
-  
-      if (data._id) {
-          setIsEditing(true); // Marca que estás editando
-      }
-  
-      // Validaciones...
-      if (!data.title.trim()) {
-          setError("title", {
-              type: "manual",
-              message: "El título es obligatorio.",
-          });
-          return;
-      }
-      if (!data.content.trim()) {
-          setError("content", {
-              type: "manual",
-              message: "El contenido es obligatorio.",
-          });
-          return;
-      }
-      if (!data.author.trim()) {
-          setError("author", {
-              type: "manual",
-              message: "El autor es obligatorio.",
-          });
-          return;
-      }
-  
-      if (!data.imageUrl?.trim()) {
-          delete data.imageUrl;
-      }
-  
-      try {
-          // Verifica si hay un _id para decidir si es creación o edición
-          const url = data._id
-              ? `${baseUrl}/blogs/update/${data._id}` // URL para actualizar el blog
-              : `${baseUrl}/blogs/create`; // URL para crear el blog
-  
-          const response = await fetch(url, {
-              method: data._id ? "PUT" : "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(data),
-          });
-  
-          const responseData = await response.json();
-  
-          if (!response.ok) {
-              const errorMessage =
-                  responseData.message ||
-                  "Ocurrió un error inesperado. Intenta más tarde.";
-              setMessage({ text: errorMessage, type: "error" });
-              return;
-          }
-  
-          setMessage({
-              text: data._id
-                  ? "Blog actualizado correctamente."
-                  : "Blog creado correctamente.",
-              type: "success",
-          });
-      } catch (error) {
-          console.error(error);
-          setMessage({
-              text: "Hubo un problema con la conexión. Revisa tu red e intenta nuevamente.",
-              type: "error",
-          });
-      }
-  };
-  
+        setMessage(null);
+
+        if (data._id) {
+            setIsEditing(true); // Marca que estás editando
+        }
+
+        // Validaciones...
+        if (!data.title.trim()) {
+            setError("title", {
+                type: "manual",
+                message: "El título es obligatorio.",
+            });
+            return;
+        }
+        if (!data.content.trim()) {
+            setError("content", {
+                type: "manual",
+                message: "El contenido es obligatorio.",
+            });
+            return;
+        }
+        if (!data.author.trim()) {
+            setError("author", {
+                type: "manual",
+                message: "El autor es obligatorio.",
+            });
+            return;
+        }
+
+        if (!data.imageUrl?.trim()) {
+            delete data.imageUrl;
+        }
+
+        try {
+            // Verifica si hay un _id para decidir si es creación o edición
+            const url = data._id
+                ? `${baseUrl}/blogs/update/${data._id}` // URL para actualizar el blog
+                : `${baseUrl}/blogs/create`; // URL para crear el blog
+
+            const response = await fetch(url, {
+                method: data._id ? "PUT" : "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            });
+
+            const responseData = await response.json();
+
+            if (!response.ok) {
+                const errorMessage =
+                    responseData.message ||
+                    "Ocurrió un error inesperado. Intenta más tarde.";
+                setMessage({ text: errorMessage, type: "error" });
+                return;
+            }
+
+            setMessage({
+                text: data._id
+                    ? "Blog actualizado correctamente."
+                    : "Blog creado correctamente.",
+                type: "success",
+            });
+        } catch (error) {
+            console.error(error);
+            setMessage({
+                text: "Hubo un problema con la conexión. Revisa tu red e intenta nuevamente.",
+                type: "error",
+            });
+        }
+    };
 
     useEffect(() => {
         if (selectedBlog) {
