@@ -21,7 +21,9 @@ app.use(fileUpload({
   tempFileDir: './uploads' // Especifica el directorio donde se almacenarán los archivos temporales
 }));
 
-app.use('/api', mainRouter)
+app.use('/api', mainRouter);
+
+app.post('/send-email', sendEmail);
 
 export default app;
 
