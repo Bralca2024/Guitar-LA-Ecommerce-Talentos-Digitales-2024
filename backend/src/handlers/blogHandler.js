@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { createBlogController, deleteBlogController, getAllBlogsController, getOneBlogController, updateBlogController } from '../controllers/blogController.js';
-import Blog from '../schema/Blog.js';
+import Blog from '../schema/blogs.js';
 import { uploadBlogImage, deleteImageFromCloudinary } from '../utilities/cloudinary.js';
 
 const getAllBlogsHandler = async (req, res) => {
