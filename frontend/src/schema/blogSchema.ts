@@ -6,7 +6,7 @@ const BlogSchema = z.object({
   title: z.string().min(1, "El título es requerido"),
   content: z.string().min(1, "El contenido es requerido"),
   author: z.string().min(1, "El autor es requerido"),
-  imageUrl: z.string().url().nullable().optional(), // Puede ser nulo o no proporcionado
+  imageUrl: z.string().url().nullable(), // Acepta null o una URL válida
   createdAt: z.date().optional().default(() => new Date()), // Fecha de creación
   updatedAt: z.date().optional().default(() => new Date()), // Fecha de actualización
   isPublished: z.boolean().default(true), // Estado de publicación del blog
