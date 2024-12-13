@@ -80,7 +80,6 @@ export default function DashboardBlogs() {
                 <th className="border border-slate-200 py-4">Título</th>
                 <th className="border border-slate-200 py-4">Descripción</th>
                 <th className="border border-slate-200 py-4">Autor</th>
-                <th className="border border-slate-200 py-4">Fecha</th>
                 <th className="border border-slate-200 py-4">Acciones</th>
               </tr>
             </thead>
@@ -90,9 +89,6 @@ export default function DashboardBlogs() {
                   <td className="p-4 border border-gray-300">{blog.title}</td>
                   <td className="p-4 border border-gray-300 max-w-sm">{blog.content}</td>
                   <td className="p-4 border border-gray-300">{blog.author}</td>
-                  <td className="p-4 border border-gray-300">
-                    {new Date(blog.createdAt).toLocaleDateString()}
-                  </td>
                   <td className="text-center">
                     <button onClick={() => blog._id && handleDeleteClick(blog._id)}>
                       <TrashIcon className="h-6 w-6 text-red-600 mr-2 hover:text-red-500 transition duration-300" />

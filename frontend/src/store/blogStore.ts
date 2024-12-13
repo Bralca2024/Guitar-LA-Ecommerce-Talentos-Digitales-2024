@@ -31,24 +31,34 @@ export const useBlogStore = create<BlogState>((set) => ({
   loading: true,
   selectedBlog: null,
   setSelectedBlog: (blog) => set({ selectedBlog: blog }),
+  
   fetchAllBlogs: async () => {
     set({ loading: true });
     try {
       const response = await axios.get(`${BASE_URL}/blogs`);
       const blogData = response.data;
-
+  
       const validatedBlogs = blogData.map((blog: BlogType) => {
-        return BlogSchema.parse(blog);
+        // Convertir las cadenas de fechas a objetos Date
+        const parsedBlog = {
+          ...blog,
+          createdAt: new Date(blog.createdAt), // Convertir createdAt
+          updatedAt: new Date(blog.updatedAt), // Convertir updatedAt
+        };
+  
+        return BlogSchema.parse(parsedBlog);
       });
-
+  
       set({ allBlogs: validatedBlogs });
       set({ loading: false });
     } catch (error) {
-      throw new Error(`Error fetching blogs. ${error}`);
+      throw new Error(`fetching blogs. ${error}`);
     } finally {
       set({ loading: false });
     }
   },
+  
+
   getOneBlog: async (blogID) => {
     set({ loading: true });
     try {
@@ -65,6 +75,7 @@ export const useBlogStore = create<BlogState>((set) => ({
       set({ loading: false });
     }
   },
+
   createBlog: async (blogData) => {
     try {
       const response = await axios.post(
@@ -80,6 +91,7 @@ export const useBlogStore = create<BlogState>((set) => ({
       throw new Error(`Error creating blog: ${error}`);
     }
   },
+  
   updateBlog: async (blogData) => {
     try {
       const blogId = blogData.get("_id");
@@ -101,6 +113,7 @@ export const useBlogStore = create<BlogState>((set) => ({
       );
     }
   },
+  
   deleteBlog: async (blogID) => {
     try {
       await axios.delete(`${BASE_URL}/blogs/delete/${blogID}`);
