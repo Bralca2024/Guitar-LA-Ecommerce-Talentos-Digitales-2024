@@ -57,11 +57,7 @@ function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-<<<<<<< HEAD
         <Route path="/DashboardProducts" element={<DashboardProducts />} />
-=======
-        <Route path="/DashboardBlogs" element={<DashboardBlogs />} />
->>>>>>> 90d2c7563371bf6c5bdf1426dbf9c64fa4ee1d61
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/payment-failure" element={<PaymentFailure />} />
