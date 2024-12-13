@@ -1,4 +1,4 @@
-import Blog from '../schema/Blog.js'; // Importa el esquema Blog
+import Blog from '../schema/blogs.js'; // Importa el esquema Blog
 import { deleteImageFromCloudinary } from '../utilities/cloudinary.js'; // Asegúrate de que la función esté correctamente importada
 
 
