@@ -58,7 +58,6 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/DashboardProducts" element={<DashboardProducts />} />
-        <Route path="/DashboardBlogs" element={<DashboardBlogs />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/payment-success" element={<PaymentSuccess />} /> 
         <Route path="/payment-failure" element={<PaymentFailure />} /> 
@@ -70,6 +69,14 @@ function App() {
           </PrivateRoute>
         } />
 
+        <Route
+          path="/DashboardBlogs"
+          element={
+            <PrivateRoute>
+              <DashboardBlogs />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/profile"
           element={
