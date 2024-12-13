@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export default function AboutUs() {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 h-[600px]">
+    <div className="grid grid-cols-1 lg:grid-cols-2 h-screen lg:h-[600px]">
       {/* Sección de Imagen */}
       <div className="h-full">
         <img
@@ -13,7 +13,7 @@ export default function AboutUs() {
       </div>
 
       {/* Sección de Texto */}
-      <div className="flex flex-col justify-between bg-orange-600 py-12 px-8 lg:px-16 h-full overflow-hidden">
+      <div className="flex flex-col justify-between bg-orange-600 py-12 px-6 sm:px-8 lg:px-16 h-full overflow-y-auto">
         <div>
           <h2 className="text-4xl text-white font-bold italic mb-6">¿Quiénes Somos?</h2>
           <p className="text-white text-lg mb-6">
