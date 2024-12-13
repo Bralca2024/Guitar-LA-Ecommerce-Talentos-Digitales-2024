@@ -36,11 +36,20 @@ export const useBlogStore = create<BlogState>((set) => ({
     try {
       const response = await axios.get(`${BASE_URL}/blogs`);
       const blogData = response.data;
-
+  
       const validatedBlogs = blogData.map((blog: BlogType) => {
-        return BlogSchema.parse(blog);
+      
+        // Convertir las cadenas de fechas a objetos Date
+        const parsedBlog = {
+          ...blog,
+          createdAt: new Date(blog.createdAt), // Convertir createdAt
+          updatedAt: new Date(blog.updatedAt), // Convertir updatedAt
+        };
+  
+        return BlogSchema.parse(parsedBlog);
       });
-
+      console.log(validatedBlogs);
+  
       set({ allBlogs: validatedBlogs });
       set({ loading: false });
     } catch (error) {
@@ -48,7 +57,7 @@ export const useBlogStore = create<BlogState>((set) => ({
     } finally {
       set({ loading: false });
     }
-  },
+  },  
   getOneBlog: async (blogID) => {
     set({ loading: true });
     try {
@@ -67,12 +76,9 @@ export const useBlogStore = create<BlogState>((set) => ({
   },
   createBlog: async (blogData) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/blogs/create`,
-        blogData
-      );
+      const response = await axios.post(`${BASE_URL}/blogs/create`, blogData); // Enviarás un objeto JSON, no FormData
       const newBlog = BlogSchema.parse(response.data);
-
+  
       set((state) => ({
         allBlogs: [...state.allBlogs, newBlog],
       }));
@@ -82,13 +88,13 @@ export const useBlogStore = create<BlogState>((set) => ({
   },
   updateBlog: async (blogData) => {
     try {
-      const blogId = blogData.get("_id");
+      const blogId = blogData._id; // Extraer el ID directamente del objeto
       const response = await axios.put(
         `${BASE_URL}/blogs/update/${blogId}`,
-        blogData
+        blogData // Enviarás un objeto JSON
       );
       const updatedBlog = BlogSchema.parse(response.data);
-
+  
       set((state) => ({
         allBlogs: state.allBlogs.map((blog) =>
           blog._id === updatedBlog._id ? updatedBlog : blog
@@ -97,20 +103,25 @@ export const useBlogStore = create<BlogState>((set) => ({
       }));
     } catch (error) {
       throw new Error(
-        `Error updating blog with ID ${blogData.get("_id")}: ${error}`
+        `Error updating blog with ID ${blogData._id}: ${error}`
       );
     }
   },
   deleteBlog: async (blogID) => {
     try {
-      await axios.delete(`${BASE_URL}/blogs/delete/${blogID}`);
+      const response = await axios.delete(`${BASE_URL}/blogs/delete/${blogID}`);
       set((state) => ({
         allBlogs: state.allBlogs.filter((blog) => blog._id !== blogID),
       }));
     } catch (error) {
+      console.error(
+        `Error eliminando el blog con ID: ${blogID}. Respuesta del servidor:`,
+        error.response?.data || error.message
+      );
       throw new Error(
-        `Error deleting blog with ID: ${blogID}. Error: ${error}`
+        `Error deleting blog with ID: ${blogID}. Error: ${error.message}`
       );
     }
   },
+  
 }));
