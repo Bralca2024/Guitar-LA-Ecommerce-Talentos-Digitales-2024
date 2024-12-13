@@ -3,6 +3,7 @@ import morgan from 'morgan';
 import fileUpload from 'express-fileupload';
 import cors from 'cors';
 import mainRouter from './routes/main.js';
+import sendEmail from './controllers/emailController.js';
 
 const app = express();
 
