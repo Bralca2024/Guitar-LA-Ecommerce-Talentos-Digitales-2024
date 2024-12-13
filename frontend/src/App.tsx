@@ -57,18 +57,20 @@ function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/DashboardProducts" element={<DashboardProducts />} />
         <Route path="/DashboardBlogs" element={<DashboardBlogs />} />
         <Route path="/checkout" element={<CheckoutPage />} />
-        <Route path="/payment-success" element={<PaymentSuccess />} /> 
-        <Route path="/payment-failure" element={<PaymentFailure />} /> 
+        <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/payment-failure" element={<PaymentFailure />} />
 
         {/* Rutas protegidas */}
-        <Route path="/my_orders" element={
-          <PrivateRoute>
-            <MyOrders />
-          </PrivateRoute>
-        } />
+        <Route
+          path="/my_orders"
+          element={
+            <PrivateRoute>
+              <MyOrders />
+            </PrivateRoute>
+          }
+        />
 
         <Route
           path="/profile"
@@ -88,7 +90,16 @@ function App() {
             </PrivateRoute>
           }
         />
+        <Route
+          path="/DashboardProducts"
+          element={
+            <PrivateRoute requiredRole="admin">
+              <DashboardProducts />
+            </PrivateRoute>
+          }
+        />
       </Routes>
+
       <Footer />
     </>
   );
