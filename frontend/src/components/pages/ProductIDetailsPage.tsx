@@ -12,7 +12,7 @@ export default function ProductIDetailsPage() {
     (state) => state.setSelectedProduct
   );
   const loading = useProductStore((state) => state.loading);
-  const {addToCart} = useCartStore();
+  const { addToCart, cart, showWarning, setShowWarning } = useCartStore();
   const [quantity, setQuantity] = useState<number>(1);
   const navigate = useNavigate();
 
@@ -22,6 +22,7 @@ export default function ProductIDetailsPage() {
       getOneProduct(id);
     }
   }, [getOneProduct, id]);
+
   const handleAddToCart = () => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -37,8 +38,27 @@ export default function ProductIDetailsPage() {
       quantity,
     };
 
+    const existingProduct = cart.find(
+      (item) => item._id === selectedProduct?._id
+    );
+    const totalQuantity = existingProduct
+      ? existingProduct.quantity + quantity
+      : quantity;
+
+    if (totalQuantity > 5) {
+      setShowWarning(true);
+      return; // No agrega al carrito si se excede la cantidad
+    }
+
     addToCart(cartItem);
-    alert(`${selectedProduct.productName} añadido al carrito`);
+  };
+
+  // Verifica si el producto ya está en el carrito y si su cantidad total es igual o mayor a 5
+  const isMaxQuantityReached = () => {
+    const existingProduct = cart.find(
+      (item) => item._id === selectedProduct?._id
+    );
+    return existingProduct ? existingProduct.quantity >= 5 : false;
   };
 
   if (loading || !selectedProduct) {
@@ -48,7 +68,6 @@ export default function ProductIDetailsPage() {
       </div>
     );
   }
-
 
   return (
     <>
@@ -95,11 +114,36 @@ export default function ProductIDetailsPage() {
                 </div>
                 <button
                   type="button"
-                  className="text-white uppercase font-bold bg-orange-600 py-2 rounded-xl"
+                  className={`text-white uppercase font-bold bg-orange-600 py-2 rounded-xl ${
+                    isMaxQuantityReached()
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                  }`}
                   onClick={handleAddToCart}
+                  disabled={isMaxQuantityReached()}
                 >
                   Agregar al carrito
                 </button>
+                {isMaxQuantityReached() && (
+                  <p className="text-center text-red-500 text-sm py-4">
+                    Has alcanzado el máximo permitido de 5 productos por tipo.
+                  </p>
+                )}
+                {showWarning && (
+                  <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center">
+                    <div className="bg-white p-6 rounded shadow-lg">
+                      <p className="text-lg">
+                        No puedes comprar más de 5 productos por tipo.
+                      </p>
+                      <button
+                        className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
+                        onClick={() => setShowWarning(false)}
+                      >
+                        Cerrar
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
