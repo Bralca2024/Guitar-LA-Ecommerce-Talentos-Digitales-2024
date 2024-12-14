@@ -41,7 +41,7 @@ export const useBlogStore = create<BlogState>((set) => ({
         // Asegúrate de que imageUrl tenga un valor, si no, usa un valor por defecto
         const parsedBlog = {
           ...blog,
-          imageUrl: blog.imageUrl || null,  // Asigna una cadena vacía si no hay imagen
+          imageUrl: blog.imageUrl || null,  // Asigna null si no hay imagen
           createdAt: new Date(blog.createdAt), // Convertir createdAt
           updatedAt: new Date(blog.updatedAt), // Convertir updatedAt
         };
@@ -49,7 +49,6 @@ export const useBlogStore = create<BlogState>((set) => ({
         return BlogSchema.parse(parsedBlog);
       });
   
-      console.log(validatedBlogs);
   
       set({ allBlogs: validatedBlogs });
       set({ loading: false });
