@@ -25,7 +25,8 @@ export default function BlogForm() {
             title: selectedBlog?.title || "",
             content: selectedBlog?.content || "",
             author: selectedBlog?.author || "",
-            imageUrl: selectedBlog?.imageUrl || "",
+            //imageUrl: selectedBlog?.imageUrl || "",
+            imageUrl: selectedBlog?.imageUrl ?? undefined, // Cambio realizado aquí: Convertimos null en undefined
             isPublished: selectedBlog?.isPublished || false,
             _id: selectedBlog?._id || undefined,
         },
@@ -117,7 +118,8 @@ export default function BlogForm() {
                 title: selectedBlog.title,
                 content: selectedBlog.content,
                 author: selectedBlog.author,
-                imageUrl: selectedBlog.imageUrl,
+                //imageUrl: selectedBlog.imageUrl,
+                imageUrl: selectedBlog.imageUrl ?? undefined, // Cambio realizado aquí también
                 isPublished: selectedBlog.isPublished,
                 _id: selectedBlog._id,
             });

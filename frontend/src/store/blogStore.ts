@@ -15,8 +15,8 @@ type BlogState = {
   setSelectedBlog: (blog: BlogType | null) => void; // Función para establecer el blog seleccionado
   fetchAllBlogs: () => Promise<void>; // Función para obtener todos los blogs
   getOneBlog: (blogID: BlogType["_id"]) => Promise<void>; // Función para obtener un blog específico por ID
-  createBlog: (blogData: FormData) => Promise<void>; // Función para crear un nuevo blog
-  updateBlog: (blogData: FormData) => Promise<void>; // Función para actualizar un blog existente
+  createBlog: (blogData: BlogType) => Promise<void>; // Función para crear un nuevo blog
+  updateBlog: (blogData: BlogType) => Promise<void>; // Función para actualizar un blog existente
   deleteBlog: (blogID: BlogType["_id"]) => Promise<void>; // Función para eliminar un blog
 };
 
@@ -36,20 +36,19 @@ export const useBlogStore = create<BlogState>((set) => ({
     try {
       const response = await axios.get(`${BASE_URL}/blogs`);
       const blogData = response.data;
-  
+
       const validatedBlogs = blogData.map((blog: BlogType) => {
         // Asegúrate de que imageUrl tenga un valor, si no, usa un valor por defecto
         const parsedBlog = {
           ...blog,
-          imageUrl: blog.imageUrl || null,  // Asigna null si no hay imagen
+          imageUrl: blog.imageUrl || null, // Asigna null si no hay imagen
           createdAt: new Date(blog.createdAt), // Convertir createdAt
           updatedAt: new Date(blog.updatedAt), // Convertir updatedAt
         };
-  
+
         return BlogSchema.parse(parsedBlog);
       });
-  
-  
+
       set({ allBlogs: validatedBlogs });
       set({ loading: false });
     } catch (error) {
@@ -58,7 +57,7 @@ export const useBlogStore = create<BlogState>((set) => ({
     } finally {
       set({ loading: false });
     }
-  },    
+  },
   getOneBlog: async (blogID) => {
     set({ loading: true });
     try {
@@ -77,9 +76,9 @@ export const useBlogStore = create<BlogState>((set) => ({
   },
   createBlog: async (blogData) => {
     try {
-      const response = await axios.post(`${BASE_URL}/blogs/create`, blogData); // Enviarás un objeto JSON, no FormData
+      const response = await axios.post(`${BASE_URL}/blogs/create`, blogData);
       const newBlog = BlogSchema.parse(response.data);
-  
+
       set((state) => ({
         allBlogs: [...state.allBlogs, newBlog],
       }));
@@ -89,13 +88,14 @@ export const useBlogStore = create<BlogState>((set) => ({
   },
   updateBlog: async (blogData) => {
     try {
-      const blogId = blogData._id; // Extraer el ID directamente del objeto
+      // Se usa blogData._id de tipo BlogType, no FormData
+      const blogId = blogData._id; // Cambio: BlogType asegura que _id exista
       const response = await axios.put(
         `${BASE_URL}/blogs/update/${blogId}`,
-        blogData // Enviarás un objeto JSON
+        blogData
       );
       const updatedBlog = BlogSchema.parse(response.data);
-  
+
       set((state) => ({
         allBlogs: state.allBlogs.map((blog) =>
           blog._id === updatedBlog._id ? updatedBlog : blog
@@ -103,26 +103,33 @@ export const useBlogStore = create<BlogState>((set) => ({
         selectedBlog: null,
       }));
     } catch (error) {
-      throw new Error(
-        `Error updating blog with ID ${blogData._id}: ${error}`
-      );
+      // Manejo de "error" como "unknown"
+      if (axios.isAxiosError(error)) {
+        console.error(error.response?.data || error.message);
+      } else {
+        console.error("Error desconocido:", error);
+      }
+      throw new Error(`Error updating blog with ID ${blogData._id}: ${error}`);
     }
   },
   deleteBlog: async (blogID) => {
     try {
-      const response = await axios.delete(`${BASE_URL}/blogs/delete/${blogID}`);
+      // Eliminar la variable no utilizada "response"
+      await axios.delete(`${BASE_URL}/blogs/delete/${blogID}`); // Variable eliminada
       set((state) => ({
         allBlogs: state.allBlogs.filter((blog) => blog._id !== blogID),
       }));
     } catch (error) {
-      console.error(
-        `Error eliminando el blog con ID: ${blogID}. Respuesta del servidor:`,
-        error.response?.data || error.message
-      );
-      throw new Error(
-        `Error deleting blog with ID: ${blogID}. Error: ${error.message}`
-      );
+      // Manejo de "error" como "unknown"
+      if (axios.isAxiosError(error)) {
+        console.error(
+          `Error eliminando el blog con ID: ${blogID}. Respuesta del servidor:`,
+          error.response?.data || error.message
+        );
+      } else {
+        console.error("Error desconocido:", error);
+      }
+      throw new Error(`Error deleting blog with ID: ${blogID}. Error: ${error}`);
     }
   },
-  
 }));
