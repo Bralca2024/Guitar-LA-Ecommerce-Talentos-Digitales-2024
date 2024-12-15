@@ -266,7 +266,7 @@ export default function HeaderNavbar() {
                               <div className="bg-white p-6 rounded shadow-lg">
                                 <p className="text-lg">
                                   Has alcanzado el máximo permitido de 5
-                                  productos por guitarra.
+                                  unidades por guitarra.
                                 </p>
                                 <button
                                   className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
