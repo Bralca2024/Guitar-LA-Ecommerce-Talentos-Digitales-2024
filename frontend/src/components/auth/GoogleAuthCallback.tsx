@@ -5,38 +5,35 @@ import { useAuthStore } from "../../store/authStore";
 const GoogleAuthCallback = () => {
     const { setToken, setRole } = useAuthStore();
     const navigate = useNavigate();
-    const baseUrl = import.meta.env.VITE_BASE_URL;
 
     useEffect(() => {
-        const fetchGoogleToken = async () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const code = urlParams.get("code");
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get("token");
     
-            if (code) {
-                try {
-                    const response = await fetch(`${baseUrl}/auth/google/callback?code=${code}`);
-                    const data = await response.json();
+        if (token) {
+            localStorage.setItem("auth_token", token); // Guarda temporalmente en localStorage
+        }
     
-                    console.log("Respuesta de Google Auth:", data); // Aquí puedes inspeccionar la respuesta
-    
-                    if (response.ok) {
-                        setToken(data.token); // Guarda el token en el estado
-                        setRole(data.user.role); // Guarda el rol del usuario en el estado
-                        navigate("/"); // Redirige al perfil después de autenticarse
-                    } else {
-                        console.error("Error de autenticación con Google:", data);
-                    }
-                } catch (error) {
-                    console.error("Error al obtener el token:", error);
-                }
+        const storedToken = localStorage.getItem("auth_token"); // Recupera desde localStorage si falta
+        if (storedToken) {
+            try {
+                setToken(storedToken);
+                const payloadBase64 = storedToken.split(".")[1];
+                const decodedPayload = JSON.parse(atob(payloadBase64));
+                setRole(decodedPayload.role);
+                navigate("/"); // Redirige a la página principal
+            } catch (error) {
+                console.error("Error al decodificar el token:", error);
+                navigate("/login");
             }
-        };
-    
-        fetchGoogleToken();
-    }, [baseUrl, setToken, setRole, navigate]);
-    
+        } else {
+            console.error("Token no encontrado en la URL ni en localStorage");
+            navigate("/login");
+        }
+    }, [setToken, setRole, navigate]);
 
-    return <div>Cargando...</div>; // Muestra algún indicador mientras se procesa la respuesta
+
+    return <div>Autenticando...</div>;
 };
 
 export default GoogleAuthCallback;
