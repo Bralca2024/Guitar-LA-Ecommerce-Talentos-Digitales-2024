@@ -99,8 +99,12 @@ Este proyecto utiliza **Cloudinary** como servicio de alojamiento de imágenes. 
   CLOUD_NAME=your_cloud_name # Identificador de la cuenta
   CLOUD_API_KEY=your_api_key # Clave pública que permite la autenticación
   CLOUD_API_SECRET=your_api_secret # Clave privada que autentica de manera segura tu aplicación
-  GOOGLE_CLIENT_ID=your_client_id
-  GOOGLE_CLIENT_SECRET=your_client_secret
+  GOOGLE_CLIENT_ID=your_client_id # ID del cliente que identifica tu aplicación en Google
+  GOOGLE_CLIENT_SECRET=your_client_secret # Clave secreta del cliente para la autenticación OAuth 2.0
+  JWT_SECRET=your_jwt_secret_key # Clave secreta para firmar y verificar tokens JWT
+  passAppGmail=your_pass_app_gmail # Contraseña de la aplicación para acceder a Gmail
+  gmail=your_gmail # Correo electrónico de la cuenta de Gmail desde la cual se enviarán correos
+  MERCADO_PAGO_ACCESS_TOKEN=your_access_token_backend # Token de acceso utilizado en el backend para generar pagos y mantener la seguridad
 ```
 
 ### Accede a la Raíz del Frontend
@@ -109,4 +113,7 @@ Este proyecto utiliza **Cloudinary** como servicio de alojamiento de imágenes. 
 
 ```bash
 VITE_BASE_URL=http://localhost:3000/api # URL Base para las peticiones API
+VITE_BASE_EMAIL_URL=http://localhost:3000/send-email # URL base para el envío de email
+VITE_MERCADOPAGO_PUBLIC_KEY=your_public_key # Clave pública utilizada para acceder a métodos de pago y cifrar datos
+VITE_MERCADO_PAGO_ACCESS_TOKEN=your_access_token # Token de acceso utilizado para autenticar solicitudes a la API
 ```
