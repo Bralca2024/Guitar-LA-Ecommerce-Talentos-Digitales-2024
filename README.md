@@ -105,6 +105,7 @@ Este proyecto utiliza **Cloudinary** como servicio de alojamiento de imágenes. 
   passAppGmail=your_pass_app_gmail # Contraseña de la aplicación para acceder a Gmail
   gmail=your_gmail # Correo electrónico de la cuenta de Gmail desde la cual se enviarán correos
   MERCADO_PAGO_ACCESS_TOKEN=your_access_token_backend # Token de acceso utilizado en el backend para generar pagos y mantener la seguridad
+  FRONTEND_URL=http://localhost:5173 #localhost por defecto al levantar la app en vite
 ```
 
 ### Accede a la Raíz del Frontend
