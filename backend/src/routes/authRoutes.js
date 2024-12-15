@@ -14,14 +14,18 @@ authRouter.get(
     '/google/callback',
     passport.authenticate('google', { failureRedirect: '/login', session: false }),
     (req, res) => {
-        const { token, user } = req.user;
+        const { token } = req.user;
 
-        if (token && user) {
-            res.json({ token, user });  // Enviar la respuesta al frontend
+        if (token) {
+            // Redirigir al frontend con el token en la URL
+            res.redirect(`${process.env.FRONTEND_URL}/auth/callback?token=${encodeURIComponent(token)}`);
         } else {
-            res.status(500).json({ message: 'Error al generar el token' });
+            res.redirect(`${process.env.FRONTEND_URL}/login?error=auth_failed`);
         }
     }
 );
+
+
+
 
 export default authRouter;
