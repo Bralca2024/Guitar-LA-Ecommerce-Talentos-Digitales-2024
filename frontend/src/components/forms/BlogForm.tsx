@@ -14,6 +14,7 @@ type BlogFormData = {
 
 export default function BlogForm() {
     const selectedBlog = useBlogStore((state) => state.selectedBlog);
+    const setIsModalOpen = useBlogStore((state) => state.setIsModalOpen); // Accedemos a la función para controlar el modal
     const {
         register,
         handleSubmit,
@@ -25,8 +26,7 @@ export default function BlogForm() {
             title: selectedBlog?.title || "",
             content: selectedBlog?.content || "",
             author: selectedBlog?.author || "",
-            //imageUrl: selectedBlog?.imageUrl || "",
-            imageUrl: selectedBlog?.imageUrl ?? undefined, // Cambio realizado aquí: Convertimos null en undefined
+            imageUrl: selectedBlog?.imageUrl ?? undefined,
             isPublished: selectedBlog?.isPublished || false,
             _id: selectedBlog?._id || undefined,
         },
@@ -103,6 +103,13 @@ export default function BlogForm() {
                     : "Blog creado correctamente.",
                 type: "success",
             });
+
+            // Llamar a fetchAllBlogs para recargar la lista de blogs
+            await useBlogStore.getState().fetchAllBlogs();
+
+            // Cerrar el formulario después de la operación exitosa
+            setIsModalOpen(false); // Cerramos el modal usando la función del store
+
         } catch (error) {
             console.error(error);
             setMessage({
@@ -118,8 +125,7 @@ export default function BlogForm() {
                 title: selectedBlog.title,
                 content: selectedBlog.content,
                 author: selectedBlog.author,
-                //imageUrl: selectedBlog.imageUrl,
-                imageUrl: selectedBlog.imageUrl ?? undefined, // Cambio realizado aquí también
+                imageUrl: selectedBlog.imageUrl ?? undefined,
                 isPublished: selectedBlog.isPublished,
                 _id: selectedBlog._id,
             });
