@@ -23,6 +23,7 @@ import DashboardBlogs from "./components/dashboard/DashboardBlogs";
 /* Auth */
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
+import GoogleAuthCallback from './components/auth/GoogleAuthCallback';
 /* Utilities */
 import ScrollToTop from "./utilities/ScrollToTop";
 import { CheckoutPage } from "./components/pages/CheckoutPage";
@@ -56,6 +57,7 @@ function App() {
         <Route path="/blogs" element={<BlogsPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/auth/google/callback" element={<GoogleAuthCallback />} />
         <Route path="/register" element={<Register />} />
         <Route path="/DashboardProducts" element={<DashboardProducts />} />
         <Route path="/checkout" element={<CheckoutPage />} />

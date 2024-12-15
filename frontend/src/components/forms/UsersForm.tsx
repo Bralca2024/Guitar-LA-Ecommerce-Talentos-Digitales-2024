@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm } from "react-hook-form"; 
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import { useState } from "react";
@@ -43,8 +43,10 @@ export default function UsersForm() {
         setToken(responseData.token);
         setRole(responseData.user.role);
 
+        // Carga el carrito si el usuario está autenticado
         loadCart();
-        // Redirecciona al inicio luego de un inicio de sesión exitoso
+
+        // Muestra mensaje de éxito y redirige al inicio luego de un inicio de sesión exitoso
         setMessage({ text: "Inicio de sesión exitoso.", type: "success" });
         navigate('/');
     } catch (error) {
@@ -52,14 +54,13 @@ export default function UsersForm() {
         setMessage({ text: "Hubo un problema con la conexión. Revisa tu red e intenta nuevamente.", type: "error" });
     }
   };
-  
+
   const handleGoogleLogin = async () => {
     // Redirigir al usuario al endpoint de Google
     window.location.href = `${baseUrl}/auth/google`;
   };
-
-
-  return (
+    
+    return (
     <div className="p-4 border rounded-md shadow-md bg-white max-w-md mx-auto">
       {message && (
         <div
