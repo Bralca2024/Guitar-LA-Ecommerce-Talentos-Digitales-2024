@@ -4,6 +4,7 @@ import { useAuthStore } from "../../store/authStore";
 import { useState } from "react";
 import { FaGoogle } from 'react-icons/fa';
 import { useCartStore } from "../../store/cartStore";
+import Swal from "sweetalert2";
 
 type LoginFormData = {
   email: string;
@@ -49,6 +50,21 @@ export default function UsersForm() {
         // Muestra mensaje de éxito y redirige al inicio luego de un inicio de sesión exitoso
         setMessage({ text: "Inicio de sesión exitoso.", type: "success" });
         navigate('/');
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          }
+        });
+        Toast.fire({
+          icon: "success",
+          title: "Login exitoso"
+        });
     } catch (error) {
         console.error(error);
         setMessage({ text: "Hubo un problema con la conexión. Revisa tu red e intenta nuevamente.", type: "error" });
