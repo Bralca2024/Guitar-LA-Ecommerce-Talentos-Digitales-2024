@@ -112,6 +112,9 @@ export default function ProductIDetailsPage() {
                     $ {selectedProduct?.price}
                   </p>
                 </div>
+                <div className="mb-4">
+                  <span className="text-xl text-orange-500">Stock Disponible: {selectedProduct?.stock}</span>
+                </div>
                 <button
                   type="button"
                   className={`text-white uppercase font-bold bg-orange-600 py-2 rounded-xl ${
