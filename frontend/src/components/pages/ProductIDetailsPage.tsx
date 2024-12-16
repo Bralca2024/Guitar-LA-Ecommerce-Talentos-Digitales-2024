@@ -3,6 +3,7 @@ import { useProductStore } from "../../store/productStore";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCartStore } from "../../store/cartStore";
 import LoadingSpinner from "../LoadingSpinner";
+import Swal from 'sweetalert2';
 
 export default function ProductIDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -15,6 +16,8 @@ export default function ProductIDetailsPage() {
   const { addToCart, cart, showWarning, setShowWarning } = useCartStore();
   const [quantity, setQuantity] = useState<number>(1);
   const navigate = useNavigate();
+
+
 
   useEffect(() => {
     if (id) {
@@ -51,6 +54,23 @@ export default function ProductIDetailsPage() {
     }
 
     addToCart(cartItem);
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 1500,
+      timerProgressBar: true,
+      icon: "success",
+      title: `${selectedProduct?.productName} agregado al carrito`,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      }
+    });
+    Toast.fire({
+      icon: "success",
+      title: `${selectedProduct?.productName} agregado al carrito`
+    });
   };
 
   // Verifica si el producto ya está en el carrito y si su cantidad total es igual o mayor a 5
