@@ -59,7 +59,6 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/auth/callback" element={<GoogleAuthCallback />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/DashboardProducts" element={<DashboardProducts />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/payment-failure" element={<PaymentFailure />} />
